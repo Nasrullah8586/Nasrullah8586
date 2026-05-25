@@ -1,4 +1,4 @@
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=30&duration=3000&pause=500&color=2D9C7C&center=true&vCenter=true&width=1000&lines=Hey%2C+I'm+Nasrullah+Khan+Ferdaus;Computer+Science+Student;Linux+%26+Cybersecurity+Enthusiast;Building+cool+stuff%2C+one+repo+at+a+time!" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=30&duration=3000&pause=500&color=2D9C7C&center=true&vCenter=true&width=1000&lines=Hey%2C+I'm+Nasrullah+Khan+Ferdaus;Computer+Science+And+Engineering+Student;Linux+%26+Cybersecurity+Enthusiast;Building+cool+stuff%2C+one+repo+at+a+time!" alt="Typing SVG" />
 
 💫 About Me:                                                      
 🎓 Student at Manarat International University, Dhaka, Bangladesh  <br>
@@ -32,14 +32,10 @@
 
 ---
 
-## 🤝 Connect With Me
+## 🌐 Socials:
+[![Facebook](https://img.shields.io/badge/Facebook-%231877F2.svg?logo=Facebook&logoColor=white)](https://www.facebook.com/share/1FJMe13prf/) [![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://www.instagram.com/nasrullah_khan._?igsh=MTM1cmRsNTRuOWh1aw==) [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](www.linkedin.com/in/nasrullah-khan-ferdaus-21422740a
+) [![email](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white)](mailto:nasrullah129261@gmail.com) 
 
-<div align="center">
-  <a href="https://www.facebook.com/https://www.facebook.com/share/1FJMe13prf/"><img src="https://img.shields.io/badge/-Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white"/></a>
-  <a href="https://www.instagram.com/https://www.instagram.com/nasrullah_khan._?igsh=MTM1cmRsNTRuOWh1aw=="><img src="https://img.shields.io/badge/-Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white"/></a>
-  <a href="https://www.linkedin.com/in/www.linkedin.com/in/nasrullah-khan-ferdaus-21422740a
-"><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/></a>
-  <a href="mailto:nasrullah129261@gmail.com"><img src="https://img.shields.io/badge/-Email-D14836?style=for-the-badge&logo=gmail&logoColor=white"/></a>
 </div>
 
 ---
