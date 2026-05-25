@@ -8,9 +8,9 @@
 🚀 Exploring Python, JavaScript, Git/GitHub, and cybersecurity tools  <br>  
 
 # ⚙️ GitHub Stats:
-![](https://github-readme-stats.shion.dev/api?username=afmjarif&theme=radical&hide_border=false&include_all_commits=false&count_private=false)<br/>
-![](https://streak-stats.demolab.com/?user=afmjarif&theme=radical&hide_border=false)<br/>
-![](https://github-readme-stats.shion.dev/api/top-langs/?username=afmjarif&theme=radical&hide_border=false&include_all_commits=false&count_private=false&layout=compact)
+![](https://github-readme-stats.shion.dev/api?username=Nasrullah8586&theme=radical&hide_border=false&include_all_commits=false&count_private=false)<br/>
+![](https://streak-stats.demolab.com/?user=nasrullahk.han&theme=radical&hide_border=false)<br/>
+![](https://github-readme-stats.shion.dev/api/top-langs/?username=Nasrullah8586&theme=radical&hide_border=false&include_all_commits=false&count_private=false&layout=compact)
 
 ## 🛠️ Tech Stack
 
@@ -38,7 +38,7 @@
 ---
 
 <div align="center">
-  <img src="https://komarev.com/ghpvc/?Nasrullah8586&style=flat-square&color=2D9C7C" alt="Profile Views" />
+  <img src="https://komarev.com/ghpvc/?username=Nasrullah8586&style=flat-square&color=2D9C7C" alt="Profile Views" />
 </div>
 
 <img src="https://raw.githubusercontent.com/trinib/trinib/main/.images/footer.svg" width="100%" />
