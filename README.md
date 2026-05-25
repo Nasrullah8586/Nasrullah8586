@@ -36,9 +36,4 @@
 </div>
 
 ---
-
-<div align="center">
-  <img src="https://komarev.com/ghpvc/?username=Nasrullah8586&style=flat-square&color=2D9C7C" alt="Profile Views" />
-</div>
-
-<img src="https://raw.githubusercontent.com/trinib/trinib/main/.images/footer.svg" width="100%" />
+<!-- Proudly created with GPRM ( https://gprm.itsvg.in ) -->
