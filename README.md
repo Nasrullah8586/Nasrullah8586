@@ -1,30 +1,19 @@
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=30&duration=3000&pause=500&color=2D9C7C&center=true&vCenter=true&width=1000&lines=Hey%2C+I'm+Nasrullah+Khan+Ferdaus;Computer+Science+Student;Linux+%26+Cybersecurity+Enthusiast;Building+cool+stuff%2C+one+repo+at+a+time!" alt="Typing SVG" />
 
-## 👨‍💻 About Me
+💫 About Me:                                                      
+🎓 Student at Manarat International University, Dhaka, Bangladesh  <br>
+✨ Exploring technology and cybersecurity since 2020  <br>
+📚 Currently learning Programming, Web Development, Linux, Networking, and Cybersecurity  <br>
+🔐 Interested in Ethical Hacking, Security Research, and System Security  <br>
+💻 Passionate about coding, problem-solving, and building real-world projects  <br>
+🚀 Exploring Python, JavaScript, Git/GitHub, and cybersecurity tools  <br>
+🎯 Goal: To become a skilled ethical hacker and cybersecurity expert  <br>
+🎲 Fun fact: I enjoy understanding how systems work behind the scenes  
 
-- 🎓 **Student** at Manarat International University, Dhaka, Bangladesh
-- 🔍 Exploring technology and cybersecurity since **2020**
-- 📚 Currently learning: Programming, Web Development, Linux, Networking, Cybersecurity
-- 🛡️ Interested in: Ethical Hacking, Security Research, System Security
-- 💻 Passionate about coding, problem-solving, and building real-world projects
-- 🐍 Exploring: Python, JavaScript, Git/GitHub, cybersecurity tools
-- 🎯 **Goal:** To become a skilled ethical hacker and cybersecurity expert
-- ⚡ **Fun fact:** I enjoy understanding how systems work behind the scenes
-
----
-
-## 📊 GitHub Stats
-
-<div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=Nasrullah-khan-ferdaus&show_icons=true&theme=dark&hide_border=true&bg_color=0D1117&title_color=2D9C7C&icon_color=2D9C7C&text_color=FFFFFF" width="48%" />
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=Nasrullah-khan-ferdaus&theme=dark&hide_border=true&background=0D1117&stroke=2D9C7C&ring=2D9C7C&fire=2D9C7C&currStreakLabel=2D9C7C" width="48%" />
-</div>
-
-<div align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Nasrullah-khan-ferdaus&layout=compact&theme=dark&hide_border=true&bg_color=0D1117&title_color=2D9C7C&text_color=FFFFFF" width="45%" />
-</div>
-
----
+# ⚙️ GitHub Stats:
+![](https://github-readme-stats.shion.dev/api?username=afmjarif&theme=radical&hide_border=false&include_all_commits=false&count_private=false)<br/>
+![](https://streak-stats.demolab.com/?user=afmjarif&theme=radical&hide_border=false)<br/>
+![](https://github-readme-stats.shion.dev/api/top-langs/?username=afmjarif&theme=radical&hide_border=false&include_all_commits=false&count_private=false&layout=compact)
 
 ## 🛠️ Tech Stack
 
