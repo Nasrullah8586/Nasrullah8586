@@ -2,13 +2,10 @@
 
 💫 About Me:                                                      
 🎓 Student at Manarat International University, Dhaka, Bangladesh  <br>
-✨ Exploring technology and cybersecurity since 2020  <br>
+✨ Exploring technology and cybersecurity <br>
 📚 Currently learning Programming, Web Development, Linux, Networking, and Cybersecurity  <br>
-🔐 Interested in Ethical Hacking, Security Research, and System Security  <br>
 💻 Passionate about coding, problem-solving, and building real-world projects  <br>
-🚀 Exploring Python, JavaScript, Git/GitHub, and cybersecurity tools  <br>
-🎯 Goal: To become a skilled ethical hacker and cybersecurity expert  <br>
-🎲 Fun fact: I enjoy understanding how systems work behind the scenes  
+🚀 Exploring Python, JavaScript, Git/GitHub, and cybersecurity tools  <br>  
 
 # ⚙️ GitHub Stats:
 ![](https://github-readme-stats.shion.dev/api?username=afmjarif&theme=radical&hide_border=false&include_all_commits=false&count_private=false)<br/>
@@ -41,7 +38,7 @@
 ---
 
 <div align="center">
-  <img src="https://komarev.com/ghpvc/?username=Nasrullah-khan-ferdaus&style=flat-square&color=2D9C7C" alt="Profile Views" />
+  <img src="https://komarev.com/ghpvc/?Nasrullah8586&style=flat-square&color=2D9C7C" alt="Profile Views" />
 </div>
 
 <img src="https://raw.githubusercontent.com/trinib/trinib/main/.images/footer.svg" width="100%" />
