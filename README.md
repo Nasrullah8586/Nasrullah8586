@@ -1,4 +1,4 @@
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=30&duration=3000&pause=500&color=2D9C7C&center=true&vCenter=true&width=1000&lines=Hey%2C+I'm+Nasrullah+Khan+Ferdaus;Computer+Science+And+Engineering+Student;Linux+%26+Cybersecurity+Enthusiast;Building+cool+stuff%2C+one+repo+at+a+time!" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=30&duration=3000&pause=500&color=2D9C7C&center=true&vCenter=true&width=1000&lines=Hey%2C+I'm+Nasrullah+Khan+Ferdaus;Computer+Science+And+Engineering+Student;Building+cool+stuff%2C+one+repo+at+a+time!" alt="Typing SVG" />
 
 💫 About Me:                                                      
 🎓 Student at Manarat International University, Dhaka, Bangladesh  <br>
