@@ -4,11 +4,10 @@ const path = require("path");
 const GITHUB_USERNAME = "Nasrullah8586";
 const GITHUB_API = "https://api.github.com/graphql";
 
-const OUTPUT_FILE = path.join(
+const GENERATED_DIRECTORY = path.join(
     __dirname,
     "..",
-    "generated",
-    "activity.svg"
+    "generated"
 );
 
 const TEMPLATE_FILE = path.join(
@@ -18,13 +17,39 @@ const TEMPLATE_FILE = path.join(
 
 
 /* =========================================================
+   YEAR CONFIGURATION
+========================================================= */
+
+const START_YEAR = 2022;
+
+const CURRENT_YEAR = new Date().getUTCFullYear();
+
+const YEARS = [];
+
+for (
+    let year = CURRENT_YEAR;
+    year >= START_YEAR;
+    year--
+) {
+    YEARS.push(year);
+}
+
+
+/* =========================================================
    GITHUB GRAPHQL
 ========================================================= */
 
 const QUERY = `
-query($login: String!) {
+query(
+    $login: String!,
+    $from: DateTime!,
+    $to: DateTime!
+) {
     user(login: $login) {
-        contributionsCollection {
+        contributionsCollection(
+            from: $from,
+            to: $to
+        ) {
             totalCommitContributions
             totalIssueContributions
             totalPullRequestContributions
@@ -36,45 +61,85 @@ query($login: String!) {
 
 
 /* =========================================================
+   GET YEAR RANGE
+========================================================= */
+
+function getYearRange(year) {
+    return {
+        from: `${year}-01-01T00:00:00Z`,
+
+        to: `${year}-12-31T23:59:59Z`
+    };
+}
+
+
+/* =========================================================
    FETCH GITHUB ACTIVITY
 ========================================================= */
 
-async function fetchGitHubActivity() {
+async function fetchGitHubActivity(year) {
     const token = process.env.GITHUB_TOKEN;
 
     if (!token) {
-        throw new Error("GITHUB_TOKEN is not available.");
-    }
-
-    const response = await fetch(GITHUB_API, {
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-        },
-
-        body: JSON.stringify({
-            query: QUERY,
-            variables: {
-                login: GITHUB_USERNAME
-            }
-        })
-    });
-
-    if (!response.ok) {
         throw new Error(
-            `GitHub API request failed: ${response.status}`
+            "GITHUB_TOKEN is not available."
         );
     }
 
-    const result = await response.json();
+    const range = getYearRange(year);
+
+    const response = await fetch(
+        GITHUB_API,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+
+                Authorization:
+                    `Bearer ${token}`
+            },
+
+            body: JSON.stringify({
+                query: QUERY,
+
+                variables: {
+                    login: GITHUB_USERNAME,
+
+                    from: range.from,
+
+                    to: range.to
+                }
+            })
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            `GitHub API request failed for ${year}: ${response.status}`
+        );
+    }
+
+    const result =
+        await response.json();
 
     if (result.errors) {
-        console.error(result.errors);
+        console.error(
+            result.errors
+        );
 
         throw new Error(
-            "GitHub GraphQL returned an error."
+            `GitHub GraphQL returned an error for ${year}.`
+        );
+    }
+
+    if (
+        !result.data ||
+        !result.data.user ||
+        !result.data.user.contributionsCollection
+    ) {
+        throw new Error(
+            `No contribution data found for ${year}.`
         );
     }
 
@@ -108,25 +173,23 @@ function getRawActivity(data) {
 ========================================================= */
 
 /*
-    Instead of treating activity as a percentage of the
-    total activity, every metric is compared against the
-    strongest metric.
+    Each activity is compared against the strongest
+    activity of the selected year.
 
     Example:
-
-    Commits      = 100
-    Pull Requests = 40
-    Issues        = 20
-    Reviews       = 60
-
-    becomes:
 
     Commits       = 100
     Pull Requests = 40
     Issues        = 20
     Reviews       = 60
-*/
 
+    Scale:
+
+    Commits       = 1.00
+    Pull Requests = 0.40
+    Issues        = 0.20
+    Reviews       = 0.60
+*/
 
 function calculateScale(activity) {
     const values = [
@@ -136,13 +199,21 @@ function calculateScale(activity) {
         activity.reviews
     ];
 
-    const maximum = Math.max(...values, 1);
+    const maximum =
+        Math.max(...values, 1);
 
     return {
-        commits: activity.commits / maximum,
-        pullRequests: activity.pullRequests / maximum,
-        issues: activity.issues / maximum,
-        reviews: activity.reviews / maximum
+        commits:
+            activity.commits / maximum,
+
+        pullRequests:
+            activity.pullRequests / maximum,
+
+        issues:
+            activity.issues / maximum,
+
+        reviews:
+            activity.reviews / maximum
     };
 }
 
@@ -159,30 +230,35 @@ function calculatePercentages(activity) {
         activity.reviews
     ];
 
-    const maximum = Math.max(...values, 1);
+    const maximum =
+        Math.max(...values, 1);
 
     return {
-        commits: Math.round(
-            (activity.commits / maximum) * 100
-        ),
+        commits:
+            Math.round(
+                (activity.commits / maximum) * 100
+            ),
 
-        pullRequests: Math.round(
-            (activity.pullRequests / maximum) * 100
-        ),
+        pullRequests:
+            Math.round(
+                (activity.pullRequests / maximum) * 100
+            ),
 
-        issues: Math.round(
-            (activity.issues / maximum) * 100
-        ),
+        issues:
+            Math.round(
+                (activity.issues / maximum) * 100
+            ),
 
-        reviews: Math.round(
-            (activity.reviews / maximum) * 100
-        )
+        reviews:
+            Math.round(
+                (activity.reviews / maximum) * 100
+            )
     };
 }
 
 
 /* =========================================================
-   RADAR CONFIGURATION
+   ACTIVITY GRAPH CONFIGURATION
 ========================================================= */
 
 const CENTER_X = 450;
@@ -196,32 +272,34 @@ const RADIUS = 155;
 ========================================================= */
 
 /*
-                 COMMITS
-                    ↑
-                    |
-                    |
- REVIEWS ←──────────┼──────────→ PULL REQUESTS
-                    |
-                    |
-                    ↓
-                  ISSUES
+                     CODE REVIEWS
+                           ↑
+                           |
+                           |
+                           |
+    COMMITS ←──────────────●──────────────→ ISSUES
+                           |
+                           |
+                           |
+                           ↓
+                    PULL REQUESTS
 */
 
 
 const AXES = {
-    commits: {
+    reviews: {
         angle: -90
     },
 
-    pullRequests: {
+    issues: {
         angle: 0
     },
 
-    issues: {
+    pullRequests: {
         angle: 90
     },
 
-    reviews: {
+    commits: {
         angle: 180
     }
 };
@@ -231,46 +309,59 @@ const AXES = {
    POLAR → CARTESIAN
 ========================================================= */
 
-function polarToCartesian(angle, distance) {
-    const radians = angle * Math.PI / 180;
+function polarToCartesian(
+    angle,
+    distance
+) {
+    const radians =
+        angle * Math.PI / 180;
 
     return {
-        x: CENTER_X + Math.cos(radians) * distance,
-        y: CENTER_Y + Math.sin(radians) * distance
+        x:
+            CENTER_X +
+            Math.cos(radians) * distance,
+
+        y:
+            CENTER_Y +
+            Math.sin(radians) * distance
     };
 }
 
 
 /* =========================================================
-   CREATE RADAR POINTS
+   CREATE ACTIVITY POINTS
 ========================================================= */
 
-function createRadarPoints(scale) {
-    const commits = polarToCartesian(
-        AXES.commits.angle,
-        RADIUS * scale.commits
-    );
+function createActivityPoints(scale) {
+    const reviews =
+        polarToCartesian(
+            AXES.reviews.angle,
+            RADIUS * scale.reviews
+        );
 
-    const pullRequests = polarToCartesian(
-        AXES.pullRequests.angle,
-        RADIUS * scale.pullRequests
-    );
+    const issues =
+        polarToCartesian(
+            AXES.issues.angle,
+            RADIUS * scale.issues
+        );
 
-    const issues = polarToCartesian(
-        AXES.issues.angle,
-        RADIUS * scale.issues
-    );
+    const pullRequests =
+        polarToCartesian(
+            AXES.pullRequests.angle,
+            RADIUS * scale.pullRequests
+        );
 
-    const reviews = polarToCartesian(
-        AXES.reviews.angle,
-        RADIUS * scale.reviews
-    );
+    const commits =
+        polarToCartesian(
+            AXES.commits.angle,
+            RADIUS * scale.commits
+        );
 
     return {
-        commits,
-        pullRequests,
+        reviews,
         issues,
-        reviews
+        pullRequests,
+        commits
     };
 }
 
@@ -285,15 +376,16 @@ function pointToString(point) {
 
 
 /* =========================================================
-   CREATE ACTIVITY POLYGON
+   CREATE ACTIVITY LINE
 ========================================================= */
 
-function createActivityPolygon(points) {
+function createActivityLine(
+    firstPoint,
+    secondPoint
+) {
     return [
-        pointToString(points.commits),
-        pointToString(points.pullRequests),
-        pointToString(points.issues),
-        pointToString(points.reviews)
+        pointToString(firstPoint),
+        pointToString(secondPoint)
     ].join(" ");
 }
 
@@ -307,8 +399,11 @@ function getUpdatedDate() {
         "en-US",
         {
             year: "numeric",
+
             month: "short",
+
             day: "numeric",
+
             timeZone: "UTC"
         }
     );
@@ -316,19 +411,35 @@ function getUpdatedDate() {
 
 
 /* =========================================================
-   CREATE SVG
+   GENERATE SVG
 ========================================================= */
 
-function generateSVG(activity, percentages, points) {
+function generateSVG(
+    year,
+    activity,
+    percentages,
+    points
+) {
     if (!fs.existsSync(TEMPLATE_FILE)) {
         throw new Error(
             `Template not found: ${TEMPLATE_FILE}`
         );
     }
 
-    let template = fs.readFileSync(
-        TEMPLATE_FILE,
-        "utf8"
+    let template =
+        fs.readFileSync(
+            TEMPLATE_FILE,
+            "utf8"
+        );
+
+
+    /* -----------------------------------------------------
+       YEAR
+    ----------------------------------------------------- */
+
+    template = template.replace(
+        /\[year\]/g,
+        String(year)
     );
 
 
@@ -383,7 +494,7 @@ function generateSVG(activity, percentages, points) {
 
 
     /* -----------------------------------------------------
-       RADAR POINTS
+       ACTIVITY POINTS
     ----------------------------------------------------- */
 
     template = template.replace(
@@ -453,6 +564,33 @@ function generateSVG(activity, percentages, points) {
 
 
     /* -----------------------------------------------------
+       ACTIVITY LINES
+    ----------------------------------------------------- */
+
+    const horizontalLine =
+        createActivityLine(
+            points.commits,
+            points.issues
+        );
+
+    const verticalLine =
+        createActivityLine(
+            points.reviews,
+            points.pullRequests
+        );
+
+    template = template.replace(
+        /\{\{horizontalActivityLine\}\}/g,
+        horizontalLine
+    );
+
+    template = template.replace(
+        /\{\{verticalActivityLine\}\}/g,
+        verticalLine
+    );
+
+
+    /* -----------------------------------------------------
        META
     ----------------------------------------------------- */
 
@@ -494,21 +632,52 @@ function validateSVG(svg) {
         );
     }
 
+
+    /* -----------------------------------------------------
+       PLACEHOLDER VALIDATION
+    ----------------------------------------------------- */
+
     const unresolvedPlaceholders = [
+        "[year]",
+
+        "[commits]",
+        "[pullRequests]",
+        "[issues]",
+        "[reviews]",
+
+        "[commitsPercent]",
+        "[pullRequestsPercent]",
+        "[issuesPercent]",
+        "[reviewsPercent]",
+
         "{{commitsPoint}}",
         "{{pullRequestsPoint}}",
         "{{issuesPoint}}",
         "{{reviewsPoint}}",
-        "[commits]",
-        "[pullRequests]",
-        "[issues]",
-        "[reviews]"
+
+        "{{commitsX}}",
+        "{{commitsY}}",
+
+        "{{pullRequestsX}}",
+        "{{pullRequestsY}}",
+
+        "{{issuesX}}",
+        "{{issuesY}}",
+
+        "{{reviewsX}}",
+        "{{reviewsY}}",
+
+        "{{horizontalActivityLine}}",
+        "{{verticalActivityLine}}"
     ];
 
-    const unresolved = unresolvedPlaceholders.filter(
-        placeholder =>
-            svg.includes(placeholder)
-    );
+
+    const unresolved =
+        unresolvedPlaceholders.filter(
+            placeholder =>
+                svg.includes(placeholder)
+        );
+
 
     if (unresolved.length > 0) {
         throw new Error(
@@ -522,39 +691,86 @@ function validateSVG(svg) {
    SAVE SVG
 ========================================================= */
 
-function saveSVG(svg) {
-    const outputDirectory = path.dirname(
-        OUTPUT_FILE
-    );
-
-    if (!fs.existsSync(outputDirectory)) {
+function saveSVG(
+    svg,
+    year
+) {
+    if (
+        !fs.existsSync(
+            GENERATED_DIRECTORY
+        )
+    ) {
         fs.mkdirSync(
-            outputDirectory,
+            GENERATED_DIRECTORY,
             {
                 recursive: true
             }
         );
     }
 
+
+    const yearOutputFile =
+        path.join(
+            GENERATED_DIRECTORY,
+            `activity-${year}.svg`
+        );
+
+
     fs.writeFileSync(
-        OUTPUT_FILE,
+        yearOutputFile,
         svg,
         "utf8"
     );
+
+
+    return yearOutputFile;
 }
 
 
 /* =========================================================
-   MAIN
+   SAVE CURRENT ACTIVITY SVG
 ========================================================= */
 
-async function main() {
-    console.log(
-        "🚀 Generating GitHub activity..."
+function saveCurrentSVG(svg) {
+    if (
+        !fs.existsSync(
+            GENERATED_DIRECTORY
+        )
+    ) {
+        fs.mkdirSync(
+            GENERATED_DIRECTORY,
+            {
+                recursive: true
+            }
+        );
+    }
+
+
+    const currentOutputFile =
+        path.join(
+            GENERATED_DIRECTORY,
+            "activity.svg"
+        );
+
+
+    fs.writeFileSync(
+        currentOutputFile,
+        svg,
+        "utf8"
     );
 
+
+    return currentOutputFile;
+}
+
+
+/* =========================================================
+   GENERATE ONE YEAR
+========================================================= */
+
+async function generateYear(year) {
     console.log(
-        `👤 User: ${GITHUB_USERNAME}`
+        `\n📅 Processing ${year}...`
     );
 
 
@@ -563,7 +779,9 @@ async function main() {
     ----------------------------------------------------- */
 
     const githubData =
-        await fetchGitHubActivity();
+        await fetchGitHubActivity(
+            year
+        );
 
 
     /* -----------------------------------------------------
@@ -571,11 +789,13 @@ async function main() {
     ----------------------------------------------------- */
 
     const activity =
-        getRawActivity(githubData);
+        getRawActivity(
+            githubData
+        );
 
 
     console.log(
-        "📊 Activity:"
+        `📊 ${year} Activity:`
     );
 
     console.log(
@@ -592,7 +812,9 @@ async function main() {
     ----------------------------------------------------- */
 
     const scale =
-        calculateScale(activity);
+        calculateScale(
+            activity
+        );
 
 
     /* -----------------------------------------------------
@@ -600,15 +822,19 @@ async function main() {
     ----------------------------------------------------- */
 
     const percentages =
-        calculatePercentages(activity);
+        calculatePercentages(
+            activity
+        );
 
 
     /* -----------------------------------------------------
-       RADAR
+       GRAPH POINTS
     ----------------------------------------------------- */
 
     const points =
-        createRadarPoints(scale);
+        createActivityPoints(
+            scale
+        );
 
 
     /* -----------------------------------------------------
@@ -617,6 +843,7 @@ async function main() {
 
     const svg =
         generateSVG(
+            year,
             activity,
             percentages,
             points
@@ -627,22 +854,136 @@ async function main() {
        VALIDATE
     ----------------------------------------------------- */
 
-    validateSVG(svg);
+    validateSVG(
+        svg
+    );
 
 
     /* -----------------------------------------------------
        SAVE
     ----------------------------------------------------- */
 
-    saveSVG(svg);
+    const outputFile =
+        saveSVG(
+            svg,
+            year
+        );
 
 
     console.log(
-        "✅ Activity SVG generated successfully."
+        `✅ ${year} SVG generated.`
     );
 
     console.log(
-        `📁 ${OUTPUT_FILE}`
+        `📁 ${outputFile}`
+    );
+
+
+    return {
+        year,
+        activity,
+        svg
+    };
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+async function main() {
+    console.log(
+        "🚀 Generating GitHub activity..."
+    );
+
+    console.log(
+        `👤 User: ${GITHUB_USERNAME}`
+    );
+
+    console.log(
+        `📆 Years: ${YEARS.join(", ")}`
+    );
+
+
+    /* -----------------------------------------------------
+       TEMPLATE CHECK
+    ----------------------------------------------------- */
+
+    if (!fs.existsSync(TEMPLATE_FILE)) {
+        throw new Error(
+            `Template not found: ${TEMPLATE_FILE}`
+        );
+    }
+
+
+    /* -----------------------------------------------------
+       GENERATED DIRECTORY
+    ----------------------------------------------------- */
+
+    if (
+        !fs.existsSync(
+            GENERATED_DIRECTORY
+        )
+    ) {
+        fs.mkdirSync(
+            GENERATED_DIRECTORY,
+            {
+                recursive: true
+            }
+        );
+    }
+
+
+    /* -----------------------------------------------------
+       GENERATE ALL YEARS
+    ----------------------------------------------------- */
+
+    let currentYearSVG = null;
+
+
+    for (const year of YEARS) {
+        const result =
+            await generateYear(
+                year
+            );
+
+
+        if (
+            year === CURRENT_YEAR
+        ) {
+            currentYearSVG =
+                result.svg;
+        }
+    }
+
+
+    /* -----------------------------------------------------
+       SAVE CURRENT YEAR AS activity.svg
+    ----------------------------------------------------- */
+
+    if (currentYearSVG) {
+        const currentOutputFile =
+            saveCurrentSVG(
+                currentYearSVG
+            );
+
+
+        console.log(
+            `\n⭐ Current activity SVG:`
+        );
+
+        console.log(
+            `📁 ${currentOutputFile}`
+        );
+    }
+
+
+    /* -----------------------------------------------------
+       COMPLETE
+    ----------------------------------------------------- */
+
+    console.log(
+        "\n🎉 All activity SVGs generated successfully."
     );
 }
 
@@ -653,7 +994,7 @@ async function main() {
 
 main().catch(error => {
     console.error(
-        "❌ Failed to generate activity SVG."
+        "\n❌ Failed to generate activity SVG."
     );
 
     console.error(
