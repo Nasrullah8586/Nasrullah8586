@@ -6,7 +6,6 @@
       <stop offset="100%" stop-color="#0d2b20"/>
     </linearGradient>
 
-```
 <filter id="glow">
   <feGaussianBlur stdDeviation="3" result="blur"/>
   <feMerge>
@@ -14,7 +13,7 @@
     <feMergeNode in="SourceGraphic"/>
   </feMerge>
 </filter>
-```
+
 
   </defs>
 
@@ -48,9 +47,7 @@ fill="#ffffff"
 
 >
 
-```
 GitHub Activity Overview
-```
 
   </text>
 
@@ -64,9 +61,7 @@ fill="#8fb9a7"
 
 >
 
-```
 Nasrullah8586 · Contribution Activity
-```
 
   </text>
 
@@ -74,7 +69,6 @@ Nasrullah8586 · Contribution Activity
 
   <g transform="translate(450 235)">
 
-```
 <!-- Radar levels -->
 <polygon
   points="0,-135 128,-42 79,109 -79,109 -128,-42"
@@ -137,9 +131,7 @@ fill="#ffffff"
 
 >
 
-```
 Commits
-```
 
   </text>
 
@@ -154,9 +146,7 @@ fill="#ffffff"
 
 >
 
-```
 Pull Requests
-```
 
   </text>
 
@@ -171,10 +161,7 @@ fill="#ffffff"
 
 >
 
-```
 Issues
-```
-
   </text>
 
 <text
@@ -188,9 +175,7 @@ fill="#ffffff"
 
 >
 
-```
 Code Reviews
-```
 
   </text>
 
@@ -205,9 +190,7 @@ fill="#ffffff"
 
 >
 
-```
 Code
-```
 
   </text>
 
