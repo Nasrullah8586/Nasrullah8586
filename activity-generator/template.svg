@@ -1,270 +1,401 @@
-<svg width="900" height="430" viewBox="0 0 900 430" xmlns="http://www.w3.org/2000/svg">
+<svg width="900" height="470" viewBox="0 0 900 470" xmlns="http://www.w3.org/2000/svg">
 
   <defs>
+
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#071a14"/>
+      <stop offset="0%" stop-color="#06140f"/>
+      <stop offset="55%" stop-color="#0a2118"/>
       <stop offset="100%" stop-color="#0d2b20"/>
     </linearGradient>
 
-<filter id="glow">
-  <feGaussianBlur stdDeviation="3" result="blur"/>
-  <feMerge>
-    <feMergeNode in="blur"/>
-    <feMergeNode in="SourceGraphic"/>
-  </feMerge>
-</filter>
+    <linearGradient id="radarFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#35C493" stop-opacity="0.38"/>
+      <stop offset="100%" stop-color="#176B45" stop-opacity="0.10"/>
+    </linearGradient>
 
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
 
   </defs>
 
-  <!-- Background -->
 
-  <rect width="900" height="430" rx="22" fill="url(#bg)"/>
+  <!-- BACKGROUND -->
 
-  <!-- Border -->
+  <rect
+    width="900"
+    height="470"
+    rx="24"
+    fill="url(#bg)"
+  />
 
-<rect
- x="1"
- y="1"
- width="898"
- height="428"
- rx="22"
- fill="none"
- stroke="#176B45"
- stroke-width="2"
-/>
+  <rect
+    x="1"
+    y="1"
+    width="898"
+    height="468"
+    rx="24"
+    fill="none"
+    stroke="#176B45"
+    stroke-width="2"
+  />
 
-  <!-- Title -->
 
-<text
-x="450"
-y="45"
-text-anchor="middle"
-font-family="Arial, Helvetica, sans-serif"
-font-size="24"
-font-weight="700"
-fill="#ffffff"
+  <!-- HEADER -->
 
->
-
-GitHub Activity Overview
-
+  <text
+    x="450"
+    y="42"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="24"
+    font-weight="700"
+    fill="#ffffff"
+  >
+    GitHub Activity Radar
   </text>
 
-<text
-x="450"
-y="70"
-text-anchor="middle"
-font-family="Arial, Helvetica, sans-serif"
-font-size="13"
-fill="#8fb9a7"
-
->
-
-Nasrullah8586 · Contribution Activity
-
+  <text
+    x="450"
+    y="66"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12"
+    fill="#8fb9a7"
+  >
+    Nasrullah8586 · Last 12 Months
   </text>
 
-  <!-- Radar center -->
 
-  <g transform="translate(450 235)">
+  <!-- RADAR -->
 
-<!-- Radar levels -->
-<polygon
-  points="0,-135 128,-42 79,109 -79,109 -128,-42"
-  fill="none"
-  stroke="#245f49"
-  stroke-width="1"
-/>
+  <g transform="translate(450 250)">
 
-<polygon
-  points="0,-100 95,-31 59,81 -59,81 -95,-31"
-  fill="none"
-  stroke="#245f49"
-  stroke-width="1"
-/>
+    <!-- Outer glow -->
 
-<polygon
-  points="0,-65 62,-20 38,53 -38,53 -62,-20"
-  fill="none"
-  stroke="#245f49"
-  stroke-width="1"
-/>
+    <circle
+      cx="0"
+      cy="0"
+      r="138"
+      fill="#2D9C7C"
+      fill-opacity="0.025"
+      filter="url(#softGlow)"
+    />
 
-<!-- Axis lines -->
-<line x1="0" y1="0" x2="0" y2="-135" stroke="#2D9C7C"/>
-<line x1="0" y1="0" x2="128" y2="-42" stroke="#2D9C7C"/>
-<line x1="0" y1="0" x2="79" y2="109" stroke="#2D9C7C"/>
-<line x1="0" y1="0" x2="-79" y2="109" stroke="#2D9C7C"/>
-<line x1="0" y1="0" x2="-128" y2="-42" stroke="#2D9C7C"/>
 
-<!-- Activity polygon -->
-<polygon
-  points="{{commitsPoint}} {{pullRequestsPoint}} {{issuesPoint}} {{reviewsPoint}} {{codePoint}}"
-  fill="#2D9C7C"
-  fill-opacity="0.25"
-  stroke="#35C493"
-  stroke-width="3"
-  filter="url(#glow)"
-/>
+    <!-- Radar levels -->
 
-<!-- Activity points -->
-<circle cx="{{commitsX}}" cy="{{commitsY}}" r="5" fill="#35C493"/>
-<circle cx="{{pullRequestsX}}" cy="{{pullRequestsY}}" r="5" fill="#35C493"/>
-<circle cx="{{issuesX}}" cy="{{issuesY}}" r="5" fill="#35C493"/>
-<circle cx="{{reviewsX}}" cy="{{reviewsY}}" r="5" fill="#35C493"/>
-<circle cx="{{codeX}}" cy="{{codeY}}" r="5" fill="#35C493"/>
-```
+    <polygon
+      points="0,-135 128,-42 79,109 -79,109 -128,-42"
+      fill="none"
+      stroke="#245f49"
+      stroke-width="1"
+      opacity="0.9"
+    />
+
+    <polygon
+      points="0,-101 96,-31 59,82 -59,82 -96,-31"
+      fill="none"
+      stroke="#245f49"
+      stroke-width="1"
+      opacity="0.8"
+    />
+
+    <polygon
+      points="0,-68 65,-21 40,55 -40,55 -65,-21"
+      fill="none"
+      stroke="#245f49"
+      stroke-width="1"
+      opacity="0.7"
+    />
+
+    <polygon
+      points="0,-34 32,-10 20,27 -20,27 -32,-10"
+      fill="none"
+      stroke="#245f49"
+      stroke-width="1"
+      opacity="0.6"
+    />
+
+
+    <!-- AXIS LINES -->
+
+    <line
+      x1="0"
+      y1="0"
+      x2="0"
+      y2="-135"
+      stroke="#2D9C7C"
+      stroke-width="1"
+      opacity="0.8"
+    />
+
+    <line
+      x1="0"
+      y1="0"
+      x2="128"
+      y2="-42"
+      stroke="#2D9C7C"
+      stroke-width="1"
+      opacity="0.8"
+    />
+
+    <line
+      x1="0"
+      y1="0"
+      x2="79"
+      y2="109"
+      stroke="#2D9C7C"
+      stroke-width="1"
+      opacity="0.8"
+    />
+
+    <line
+      x1="0"
+      y1="0"
+      x2="-79"
+      y2="109"
+      stroke="#2D9C7C"
+      stroke-width="1"
+      opacity="0.8"
+    />
+
+    <line
+      x1="0"
+      y1="0"
+      x2="-128"
+      y2="-42"
+      stroke="#2D9C7C"
+      stroke-width="1"
+      opacity="0.8"
+    />
+
+
+    <!-- ACTIVITY SHAPE -->
+
+    <polygon
+      points="{{commitsPoint}} {{pullRequestsPoint}} {{issuesPoint}} {{reviewsPoint}} {{codePoint}}"
+      fill="url(#radarFill)"
+      stroke="#35C493"
+      stroke-width="3"
+      stroke-linejoin="round"
+      filter="url(#glow)"
+    />
+
+
+    <!-- ACTIVITY POINTS -->
+
+    <circle
+      cx="{{commitsX}}"
+      cy="{{commitsY}}"
+      r="6"
+      fill="#35C493"
+      stroke="#ffffff"
+      stroke-width="2"
+    />
+
+    <circle
+      cx="{{pullRequestsX}}"
+      cy="{{pullRequestsY}}"
+      r="6"
+      fill="#35C493"
+      stroke="#ffffff"
+      stroke-width="2"
+    />
+
+    <circle
+      cx="{{issuesX}}"
+      cy="{{issuesY}}"
+      r="6"
+      fill="#35C493"
+      stroke="#ffffff"
+      stroke-width="2"
+    />
+
+    <circle
+      cx="{{reviewsX}}"
+      cy="{{reviewsY}}"
+      r="6"
+      fill="#35C493"
+      stroke="#ffffff"
+      stroke-width="2"
+    />
+
+    <circle
+      cx="{{codeX}}"
+      cy="{{codeY}}"
+      r="6"
+      fill="#35C493"
+      stroke="#ffffff"
+      stroke-width="2"
+    />
+
+
+    <!-- CENTER -->
+
+    <circle
+      cx="0"
+      cy="0"
+      r="4"
+      fill="#ffffff"
+    />
 
   </g>
 
-  <!-- Labels -->
 
-<text
-x="450"
-y="91"
-text-anchor="middle"
-font-family="Arial"
-font-size="14"
-font-weight="600"
-fill="#ffffff"
+  <!-- COMMITS -->
 
->
-
-Commits
-
+  <text
+    x="450"
+    y="94"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="14"
+    font-weight="700"
+    fill="#ffffff"
+  >
+    Commits
   </text>
 
-<text
-x="625"
-y="198"
-text-anchor="middle"
-font-family="Arial"
-font-size="14"
-font-weight="600"
-fill="#ffffff"
-
->
-
-Pull Requests
-
+  <text
+    x="450"
+    y="113"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12"
+    fill="#35C493"
+  >
+    [commits]
   </text>
 
-<text
-x="548"
-y="375"
-text-anchor="middle"
-font-family="Arial"
-font-size="14"
-font-weight="600"
-fill="#ffffff"
 
->
+  <!-- PULL REQUESTS -->
 
-Issues
+  <text
+    x="635"
+    y="191"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="14"
+    font-weight="700"
+    fill="#ffffff"
+  >
+    Pull Requests
   </text>
 
-<text
-x="352"
-y="375"
-text-anchor="middle"
-font-family="Arial"
-font-size="14"
-font-weight="600"
-fill="#ffffff"
-
->
-
-Code Reviews
-
+  <text
+    x="635"
+    y="210"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12"
+    fill="#35C493"
+  >
+    [pullRequests]
   </text>
 
-<text
-x="275"
-y="198"
-text-anchor="middle"
-font-family="Arial"
-font-size="14"
-font-weight="600"
-fill="#ffffff"
 
->
+  <!-- ISSUES -->
 
-Code
-
+  <text
+    x="560"
+    y="399"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="14"
+    font-weight="700"
+    fill="#ffffff"
+  >
+    Issues
   </text>
 
-  <!-- Values -->
-
-<text
-x="450"
-y="110"
-text-anchor="middle"
-font-family="Arial"
-font-size="12"
-fill="#35C493"
-
->
-
-[commits]
-
+  <text
+    x="560"
+    y="418"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12"
+    fill="#35C493"
+  >
+    [issues]
   </text>
 
-<text
-x="625"
-y="217"
-text-anchor="middle"
-font-family="Arial"
-font-size="12"
-fill="#35C493"
 
->
+  <!-- CODE REVIEWS -->
 
-[pullRequests]
-
+  <text
+    x="340"
+    y="399"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="14"
+    font-weight="700"
+    fill="#ffffff"
+  >
+    Code Reviews
   </text>
 
-<text
-x="548"
-y="394"
-text-anchor="middle"
-font-family="Arial"
-font-size="12"
-fill="#35C493"
-
->
-
-[issues]
-
+  <text
+    x="340"
+    y="418"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12"
+    fill="#35C493"
+  >
+    [reviews]
   </text>
 
-<text
-x="352"
-y="394"
-text-anchor="middle"
-font-family="Arial"
-font-size="12"
-fill="#35C493"
 
->
+  <!-- CODE -->
 
-[reviews]
-
+  <text
+    x="265"
+    y="191"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="14"
+    font-weight="700"
+    fill="#ffffff"
+  >
+    Code
   </text>
 
-<text
-x="275"
-y="217"
-text-anchor="middle"
-font-family="Arial"
-font-size="12"
-fill="#35C493"
+  <text
+    x="265"
+    y="210"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12"
+    fill="#35C493"
+  >
+    [code]
+  </text>
 
->
 
-[code]
+  <!-- FOOTER -->
 
-
+  <text
+    x="450"
+    y="452"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="10"
+    fill="#557c6c"
+  >
+    Contribution activity · Updated automatically by GitHub Actions
   </text>
 
 </svg>
