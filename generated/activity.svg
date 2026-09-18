@@ -4,13 +4,13 @@
 
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#06140f"/>
-      <stop offset="55%" stop-color="#0a2118"/>
+      <stop offset="50%" stop-color="#0a2118"/>
       <stop offset="100%" stop-color="#0d2b20"/>
     </linearGradient>
 
     <linearGradient id="radarFill" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#35C493" stop-opacity="0.38"/>
-      <stop offset="100%" stop-color="#176B45" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#176B45" stop-opacity="0.08"/>
     </linearGradient>
 
     <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
@@ -22,7 +22,7 @@
     </filter>
 
     <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feGaussianBlur stdDeviation="10" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
@@ -30,9 +30,6 @@
     </filter>
 
   </defs>
-
-
-  <!-- BACKGROUND -->
 
   <rect
     width="900"
@@ -52,24 +49,21 @@
     stroke-width="2"
   />
 
-
-  <!-- HEADER -->
-
   <text
     x="450"
-    y="42"
+    y="40"
     text-anchor="middle"
     font-family="Arial, Helvetica, sans-serif"
     font-size="24"
     font-weight="700"
     fill="#ffffff"
   >
-    GitHub Activity Radar
+    GitHub Activity
   </text>
 
   <text
     x="450"
-    y="66"
+    y="63"
     text-anchor="middle"
     font-family="Arial, Helvetica, sans-serif"
     font-size="12"
@@ -78,115 +72,87 @@
     Nasrullah8586 · Last 12 Months
   </text>
 
-
-  <!-- RADAR -->
-
-  <g transform="translate(450 250)">
-
-    <!-- Outer glow -->
+  <g transform="translate(450 245)">
 
     <circle
       cx="0"
       cy="0"
-      r="138"
+      r="142"
       fill="#2D9C7C"
       fill-opacity="0.025"
       filter="url(#softGlow)"
     />
 
-
-    <!-- Radar levels -->
-
-    <polygon
-      points="0,-135 128,-42 79,109 -79,109 -128,-42"
+    <rect
+      x="-135"
+      y="-135"
+      width="270"
+      height="270"
+      rx="4"
       fill="none"
       stroke="#245f49"
       stroke-width="1"
-      opacity="0.9"
+      opacity="0.95"
     />
 
-    <polygon
-      points="0,-101 96,-31 59,82 -59,82 -96,-31"
+    <rect
+      x="-101"
+      y="-101"
+      width="202"
+      height="202"
+      rx="3"
       fill="none"
       stroke="#245f49"
       stroke-width="1"
-      opacity="0.8"
+      opacity="0.75"
     />
 
-    <polygon
-      points="0,-68 65,-21 40,55 -40,55 -65,-21"
+    <rect
+      x="-68"
+      y="-68"
+      width="136"
+      height="136"
+      rx="2"
       fill="none"
       stroke="#245f49"
+      stroke-width="1"
+      opacity="0.65"
+    />
+
+    <rect
+      x="-34"
+      y="-34"
+      width="68"
+      height="68"
+      rx="2"
+      fill="none"
+      stroke="#245f49"
+      stroke-width="1"
+      opacity="0.55"
+    />
+
+    <line
+      x1="0"
+      y1="-135"
+      x2="0"
+      y2="135"
+      stroke="#2D9C7C"
+      stroke-width="1"
+      opacity="0.7"
+    />
+
+    <line
+      x1="-135"
+      y1="0"
+      x2="135"
+      y2="0"
+      stroke="#2D9C7C"
       stroke-width="1"
       opacity="0.7"
     />
 
     <polygon
-      points="0,-34 32,-10 20,27 -20,27 -32,-10"
-      fill="none"
-      stroke="#245f49"
-      stroke-width="1"
-      opacity="0.6"
-    />
-
-
-    <!-- AXIS LINES -->
-
-    <line
-      x1="0"
-      y1="0"
-      x2="0"
-      y2="-135"
-      stroke="#2D9C7C"
-      stroke-width="1"
-      opacity="0.8"
-    />
-
-    <line
-      x1="0"
-      y1="0"
-      x2="128"
-      y2="-42"
-      stroke="#2D9C7C"
-      stroke-width="1"
-      opacity="0.8"
-    />
-
-    <line
-      x1="0"
-      y1="0"
-      x2="79"
-      y2="109"
-      stroke="#2D9C7C"
-      stroke-width="1"
-      opacity="0.8"
-    />
-
-    <line
-      x1="0"
-      y1="0"
-      x2="-79"
-      y2="109"
-      stroke="#2D9C7C"
-      stroke-width="1"
-      opacity="0.8"
-    />
-
-    <line
-      x1="0"
-      y1="0"
-      x2="-128"
-      y2="-42"
-      stroke="#2D9C7C"
-      stroke-width="1"
-      opacity="0.8"
-    />
-
-
-    <!-- ACTIVITY SHAPE -->
-
-    <polygon
-      points="0,-135 1.28,-0.42 0,0 0,0 -5.12,-1.68"
+      points="450.00,100.00 451.01,255.00 450.00,255.00 450.00,255.00"
       fill="url(#radarFill)"
       stroke="#35C493"
       stroke-width="3"
@@ -194,12 +160,9 @@
       filter="url(#glow)"
     />
 
-
-    <!-- ACTIVITY POINTS -->
-
     <circle
-      cx="0"
-      cy="-135"
+      cx="450.00"
+      cy="100.00"
       r="6"
       fill="#35C493"
       stroke="#ffffff"
@@ -207,8 +170,8 @@
     />
 
     <circle
-      cx="1.28"
-      cy="-0.42"
+      cx="451.01"
+      cy="255.00"
       r="6"
       fill="#35C493"
       stroke="#ffffff"
@@ -216,8 +179,8 @@
     />
 
     <circle
-      cx="0"
-      cy="0"
+      cx="450.00"
+      cy="255.00"
       r="6"
       fill="#35C493"
       stroke="#ffffff"
@@ -225,25 +188,13 @@
     />
 
     <circle
-      cx="0"
-      cy="0"
+      cx="450.00"
+      cy="255.00"
       r="6"
       fill="#35C493"
       stroke="#ffffff"
       stroke-width="2"
     />
-
-    <circle
-      cx="-5.12"
-      cy="-1.68"
-      r="6"
-      fill="#35C493"
-      stroke="#ffffff"
-      stroke-width="2"
-    />
-
-
-    <!-- CENTER -->
 
     <circle
       cx="0"
@@ -253,9 +204,6 @@
     />
 
   </g>
-
-
-  <!-- COMMITS -->
 
   <text
     x="450"
@@ -277,16 +225,13 @@
     font-size="12"
     fill="#35C493"
   >
-    100%
+    154
   </text>
 
-
-  <!-- PULL REQUESTS -->
-
   <text
-    x="635"
-    y="191"
-    text-anchor="middle"
+    x="610"
+    y="248"
+    text-anchor="start"
     font-family="Arial, Helvetica, sans-serif"
     font-size="14"
     font-weight="700"
@@ -296,22 +241,19 @@
   </text>
 
   <text
-    x="635"
-    y="210"
-    text-anchor="middle"
+    x="610"
+    y="267"
+    text-anchor="start"
     font-family="Arial, Helvetica, sans-serif"
     font-size="12"
     fill="#35C493"
   >
-    1%
+    1
   </text>
 
-
-  <!-- ISSUES -->
-
   <text
-    x="560"
-    y="399"
+    x="450"
+    y="414"
     text-anchor="middle"
     font-family="Arial, Helvetica, sans-serif"
     font-size="14"
@@ -322,23 +264,20 @@
   </text>
 
   <text
-    x="560"
-    y="418"
+    x="450"
+    y="433"
     text-anchor="middle"
     font-family="Arial, Helvetica, sans-serif"
     font-size="12"
     fill="#35C493"
   >
-    0%
+    0
   </text>
 
-
-  <!-- CODE REVIEWS -->
-
   <text
-    x="340"
-    y="399"
-    text-anchor="middle"
+    x="290"
+    y="248"
+    text-anchor="end"
     font-family="Arial, Helvetica, sans-serif"
     font-size="14"
     font-weight="700"
@@ -348,48 +287,19 @@
   </text>
 
   <text
-    x="340"
-    y="418"
-    text-anchor="middle"
+    x="290"
+    y="267"
+    text-anchor="end"
     font-family="Arial, Helvetica, sans-serif"
     font-size="12"
     fill="#35C493"
   >
-    0%
+    0
   </text>
-
-
-  <!-- CODE -->
-
-  <text
-    x="265"
-    y="191"
-    text-anchor="middle"
-    font-family="Arial, Helvetica, sans-serif"
-    font-size="14"
-    font-weight="700"
-    fill="#ffffff"
-  >
-    Code
-  </text>
-
-  <text
-    x="265"
-    y="210"
-    text-anchor="middle"
-    font-family="Arial, Helvetica, sans-serif"
-    font-size="12"
-    fill="#35C493"
-  >
-    4%
-  </text>
-
-
-  <!-- FOOTER -->
 
   <text
     x="450"
-    y="452"
+    y="457"
     text-anchor="middle"
     font-family="Arial, Helvetica, sans-serif"
     font-size="10"
