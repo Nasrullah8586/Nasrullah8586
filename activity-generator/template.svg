@@ -1,7 +1,7 @@
-<svg width="900" height="430" viewBox="0 0 900 430" xmlns="http://www.w3.org/2000/svg">
+<svg width="900" height="460" viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg">
 
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#071a14"/>
       <stop offset="100%" stop-color="#0d2b20"/>
     </linearGradient>
@@ -20,7 +20,12 @@
 
   <!-- Background -->
 
-  <rect width="900" height="430" rx="22" fill="url(#bg)"/>
+<rect
+ width="900"
+ height="460"
+ rx="22"
+ fill="url(#background)"
+/>
 
   <!-- Border -->
 
@@ -28,7 +33,7 @@
  x="1"
  y="1"
  width="898"
- height="428"
+ height="458"
  rx="22"
  fill="none"
  stroke="#176B45"
@@ -39,7 +44,7 @@
 
 <text
 x="450"
-y="45"
+y="42"
 text-anchor="middle"
 font-family="Arial, Helvetica, sans-serif"
 font-size="24"
@@ -56,7 +61,7 @@ GitHub Activity Overview
 
 <text
 x="450"
-y="70"
+y="66"
 text-anchor="middle"
 font-family="Arial, Helvetica, sans-serif"
 font-size="13"
@@ -70,69 +75,144 @@ Nasrullah8586 · Contribution Activity
 
   </text>
 
-  <!-- Radar center -->
+  <!-- ==============================
+       RADAR CHART
+  =============================== -->
 
-  <g transform="translate(450 235)">
+  <g transform="translate(450 245)">
 
 ```
-<!-- Radar levels -->
+<!-- Outer Radar -->
 <polygon
-  points="0,-135 128,-42 79,109 -79,109 -128,-42"
+  points="0,-145 145,0 0,145 -145,0"
   fill="none"
   stroke="#245f49"
   stroke-width="1"
 />
 
+<!-- Middle Radar -->
 <polygon
-  points="0,-100 95,-31 59,81 -59,81 -95,-31"
+  points="0,-105 105,0 0,105 -105,0"
   fill="none"
   stroke="#245f49"
   stroke-width="1"
 />
 
+<!-- Inner Radar -->
 <polygon
-  points="0,-65 62,-20 38,53 -38,53 -62,-20"
+  points="0,-65 65,0 0,65 -65,0"
   fill="none"
   stroke="#245f49"
   stroke-width="1"
 />
 
-<!-- Axis lines -->
-<line x1="0" y1="0" x2="0" y2="-135" stroke="#2D9C7C"/>
-<line x1="0" y1="0" x2="128" y2="-42" stroke="#2D9C7C"/>
-<line x1="0" y1="0" x2="79" y2="109" stroke="#2D9C7C"/>
-<line x1="0" y1="0" x2="-79" y2="109" stroke="#2D9C7C"/>
-<line x1="0" y1="0" x2="-128" y2="-42" stroke="#2D9C7C"/>
 
-<!-- Activity polygon -->
+<!-- Axis: Commits -->
+<line
+  x1="0"
+  y1="0"
+  x2="0"
+  y2="-145"
+  stroke="#2D9C7C"
+  stroke-width="1.5"
+/>
+
+<!-- Axis: Pull Requests -->
+<line
+  x1="0"
+  y1="0"
+  x2="145"
+  y2="0"
+  stroke="#2D9C7C"
+  stroke-width="1.5"
+/>
+
+<!-- Axis: Issues -->
+<line
+  x1="0"
+  y1="0"
+  x2="0"
+  y2="145"
+  stroke="#2D9C7C"
+  stroke-width="1.5"
+/>
+
+<!-- Axis: Code Reviews -->
+<line
+  x1="0"
+  y1="0"
+  x2="-145"
+  y2="0"
+  stroke="#2D9C7C"
+  stroke-width="1.5"
+/>
+
+
+<!-- ==============================
+     DYNAMIC RADAR AREA
+=============================== -->
+
 <polygon
-  points="{{commitsPoint}} {{pullRequestsPoint}} {{issuesPoint}} {{reviewsPoint}} {{codePoint}}"
+  points="
+    0,{{commitsRadius}}
+    {{pullRequestsRadius}},0
+    0,{{issuesRadius}}
+    -{{reviewsRadius}},0
+  "
   fill="#2D9C7C"
-  fill-opacity="0.25"
+  fill-opacity="0.28"
   stroke="#35C493"
   stroke-width="3"
   filter="url(#glow)"
 />
 
-<!-- Activity points -->
-<circle cx="{{commitsX}}" cy="{{commitsY}}" r="5" fill="#35C493"/>
-<circle cx="{{pullRequestsX}}" cy="{{pullRequestsY}}" r="5" fill="#35C493"/>
-<circle cx="{{issuesX}}" cy="{{issuesY}}" r="5" fill="#35C493"/>
-<circle cx="{{reviewsX}}" cy="{{reviewsY}}" r="5" fill="#35C493"/>
-<circle cx="{{codeX}}" cy="{{codeY}}" r="5" fill="#35C493"/>
+
+<!-- Dynamic Points -->
+
+<circle
+  cx="0"
+  cy="{{commitsRadius}}"
+  r="5"
+  fill="#35C493"
+/>
+
+<circle
+  cx="{{pullRequestsRadius}}"
+  cy="0"
+  r="5"
+  fill="#35C493"
+/>
+
+<circle
+  cx="0"
+  cy="{{issuesRadius}}"
+  r="5"
+  fill="#35C493"
+/>
+
+<circle
+  cx="-{{reviewsRadius}}"
+  cy="0"
+  r="5"
+  fill="#35C493"
+/>
 ```
 
   </g>
 
-  <!-- Labels -->
+  <!-- ==============================
+       METRIC LABELS
+  =============================== -->
+
+  <!-- Commits -->
 
 <text
 x="450"
 y="91"
 text-anchor="middle"
-font-family="Arial"
-font-size="14"
-font-weight="600"
+font-family="Arial, Helvetica, sans-serif"
+font-size="15"
+font-weight="700"
 fill="#ffffff"
 
 >
@@ -144,12 +224,30 @@ Commits
   </text>
 
 <text
-x="625"
-y="198"
+x="450"
+y="110"
 text-anchor="middle"
-font-family="Arial"
-font-size="14"
-font-weight="600"
+font-family="Arial, Helvetica, sans-serif"
+font-size="13"
+fill="#35C493"
+
+>
+
+```
+{{commits}}
+```
+
+  </text>
+
+  <!-- Pull Requests -->
+
+<text
+x="615"
+y="240"
+text-anchor="middle"
+font-family="Arial, Helvetica, sans-serif"
+font-size="15"
+font-weight="700"
 fill="#ffffff"
 
 >
@@ -161,12 +259,30 @@ Pull Requests
   </text>
 
 <text
-x="548"
-y="375"
+x="615"
+y="260"
 text-anchor="middle"
-font-family="Arial"
-font-size="14"
-font-weight="600"
+font-family="Arial, Helvetica, sans-serif"
+font-size="13"
+fill="#35C493"
+
+>
+
+```
+{{pullRequests}}
+```
+
+  </text>
+
+  <!-- Issues -->
+
+<text
+x="450"
+y="420"
+text-anchor="middle"
+font-family="Arial, Helvetica, sans-serif"
+font-size="15"
+font-weight="700"
 fill="#ffffff"
 
 >
@@ -178,12 +294,30 @@ Issues
   </text>
 
 <text
-x="352"
-y="375"
+x="450"
+y="440"
 text-anchor="middle"
-font-family="Arial"
-font-size="14"
-font-weight="600"
+font-family="Arial, Helvetica, sans-serif"
+font-size="13"
+fill="#35C493"
+
+>
+
+```
+{{issues}}
+```
+
+  </text>
+
+  <!-- Code Reviews -->
+
+<text
+x="285"
+y="240"
+text-anchor="middle"
+font-family="Arial, Helvetica, sans-serif"
+font-size="15"
+font-weight="700"
 fill="#ffffff"
 
 >
@@ -195,78 +329,11 @@ Code Reviews
   </text>
 
 <text
-x="275"
-y="198"
+x="285"
+y="260"
 text-anchor="middle"
-font-family="Arial"
-font-size="14"
-font-weight="600"
-fill="#ffffff"
-
->
-
-```
-Code
-```
-
-  </text>
-
-  <!-- Values -->
-
-<text
-x="450"
-y="110"
-text-anchor="middle"
-font-family="Arial"
-font-size="12"
-fill="#35C493"
-
->
-
-```
-{{commits}}
-```
-
-  </text>
-
-<text
-x="625"
-y="217"
-text-anchor="middle"
-font-family="Arial"
-font-size="12"
-fill="#35C493"
-
->
-
-```
-{{pullRequests}}
-```
-
-  </text>
-
-<text
-x="548"
-y="394"
-text-anchor="middle"
-font-family="Arial"
-font-size="12"
-fill="#35C493"
-
->
-
-```
-{{issues}}
-```
-
-  </text>
-
-<text
-x="352"
-y="394"
-text-anchor="middle"
-font-family="Arial"
-font-size="12"
+font-family="Arial, Helvetica, sans-serif"
+font-size="13"
 fill="#35C493"
 
 >
@@ -277,21 +344,13 @@ fill="#35C493"
 
   </text>
 
-<text
-x="275"
-y="217"
-text-anchor="middle"
-font-family="Arial"
-font-size="12"
-fill="#35C493"
+  <!-- Center Point -->
 
->
-
-```
-{{code}}
-```
-
-  </text>
+<circle
+ cx="450"
+ cy="245"
+ r="4"
+ fill="#35C493"
+/>
 
 </svg>
-
