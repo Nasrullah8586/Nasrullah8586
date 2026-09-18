@@ -4,6 +4,20 @@ const path = require("path");
 const GITHUB_USERNAME = "Nasrullah8586";
 const GITHUB_API = "https://api.github.com/graphql";
 
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+
+if (!GITHUB_TOKEN) {
+    throw new Error(
+        "GITHUB_TOKEN is not available. Make sure the GitHub Actions workflow provides GITHUB_TOKEN."
+    );
+}
+
+const GITHUB_HEADERS = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${GITHUB_TOKEN}`,
+    "User-Agent": GITHUB_USERNAME
+};
+
 const GENERATED_DIRECTORY = path.join(
     __dirname,
     "..",
@@ -14,6 +28,7 @@ const TEMPLATE_FILE = path.join(
     __dirname,
     "template.svg"
 );
+
 
 /* =========================================================
    GITHUB GRAPHQL
@@ -70,9 +85,7 @@ async function fetchContributionYears() {
     const response = await fetch(GITHUB_API, {
         method: "POST",
 
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: GITHUB_HEADERS,
 
         body: JSON.stringify({
             query: YEARS_QUERY,
@@ -133,9 +146,7 @@ async function fetchGitHubActivity(year) {
     const response = await fetch(GITHUB_API, {
         method: "POST",
 
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: GITHUB_HEADERS,
 
         body: JSON.stringify({
             query: QUERY,
