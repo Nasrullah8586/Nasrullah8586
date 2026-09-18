@@ -1,3 +1,4 @@
+```javascript
 const fs = require("fs");
 const path = require("path");
 
@@ -79,8 +80,6 @@ const query = `
                 totalPullRequestContributions
 
                 totalPullRequestReviewContributions
-
-                totalRepositoriesWithContributedCommits
             }
         }
     }
@@ -186,55 +185,20 @@ function getRawActivity(
 
     return {
 
-        /*
-         * CODE
-         *
-         * Number of repositories where
-         * the user contributed commits.
-         *
-         * This is an official GitHub
-         * contribution field.
-         */
-
-        code:
-            activity
-                .totalRepositoriesWithContributedCommits
-            || 0,
-
-
-        /*
-         * COMMITS
-         */
-
         commits:
             activity
                 .totalCommitContributions
             || 0,
-
-
-        /*
-         * PULL REQUESTS
-         */
 
         pullRequests:
             activity
                 .totalPullRequestContributions
             || 0,
 
-
-        /*
-         * ISSUES
-         */
-
         issues:
             activity
                 .totalIssueContributions
             || 0,
-
-
-        /*
-         * CODE REVIEWS
-         */
 
         reviews:
             activity
@@ -253,7 +217,6 @@ function calculatePercentages(
 ) {
 
     const values = [
-        raw.code,
         raw.commits,
         raw.pullRequests,
         raw.issues,
@@ -278,8 +241,6 @@ function calculatePercentages(
 
         return {
 
-            code: 0,
-
             commits: 0,
 
             pullRequests: 0,
@@ -292,11 +253,6 @@ function calculatePercentages(
 
 
     return {
-
-        code:
-            Math.round(
-                (raw.code / maxValue) * 100
-            ),
 
         commits:
             Math.round(
@@ -322,7 +278,7 @@ function calculatePercentages(
 
 
 /* =========================================================
-   CREATE RADAR POINTS
+   CREATE 4-AXIS RADAR POINTS
 ========================================================= */
 
 function createRadarPoints(
@@ -333,27 +289,25 @@ function createRadarPoints(
 
 
     /*
-     * Five-axis radar positions
+     * Four-axis radar
      *
-     *                 COMMITS
-     *                    |
-     *                    |
-     *        CODE        |       PULL REQUESTS
-     *          \         |        /
-     *           \        |       /
-     *            \       |      /
-     *             \      |     /
-     *              \     |    /
-     *               \    |   /
-     *                \   |  /
-     *                 \  | /
-     *                  \ |/
-     *                   \/
-     *                   /\
-     *                  /  \
-     *                 /    \
-     *                /      \
-     *       REVIEWS /        \ ISSUES
+     *                    COMMITS
+     *                       |
+     *                       |
+     *                       |
+     *                       |
+     *                       |
+     *                       |
+     *                       |
+     * REVIEWS  -------------+-------------  PULL REQUESTS
+     *                       |
+     *                       |
+     *                       |
+     *                       |
+     *                       |
+     *                       |
+     *                       |
+     *                     ISSUES
      *
      */
 
@@ -362,27 +316,22 @@ function createRadarPoints(
 
         commits: {
             x: 0,
-            y: -135
+            y: -MAX_RADIUS
         },
 
         pullRequests: {
-            x: 128,
-            y: -42
+            x: MAX_RADIUS,
+            y: 0
         },
 
         issues: {
-            x: 79,
-            y: 109
+            x: 0,
+            y: MAX_RADIUS
         },
 
         reviews: {
-            x: -79,
-            y: 109
-        },
-
-        code: {
-            x: -128,
-            y: -42
+            x: -MAX_RADIUS,
+            y: 0
         }
     };
 
@@ -427,15 +376,6 @@ function createRadarPoints(
         (percentages.reviews / 100);
 
 
-    const codeX =
-        positions.code.x *
-        (percentages.code / 100);
-
-    const codeY =
-        positions.code.y *
-        (percentages.code / 100);
-
-
     return {
 
         commitsPoint:
@@ -450,9 +390,6 @@ function createRadarPoints(
         reviewsPoint:
             `${reviewsX},${reviewsY}`,
 
-        codePoint:
-            `${codeX},${codeY}`,
-
 
         commitsX,
         commitsY,
@@ -464,10 +401,7 @@ function createRadarPoints(
         issuesY,
 
         reviewsX,
-        reviewsY,
-
-        codeX,
-        codeY
+        reviewsY
     };
 }
 
@@ -491,12 +425,6 @@ function generateSVG(
     /* =====================================================
        PERCENTAGE VALUES
     ===================================================== */
-
-    svg = svg.replaceAll(
-        "[code]",
-        `${percentages.code}%`
-    );
-
 
     svg = svg.replaceAll(
         "[commits]",
@@ -547,12 +475,6 @@ function generateSVG(
     svg = svg.replaceAll(
         "{{reviewsPoint}}",
         radar.reviewsPoint
-    );
-
-
-    svg = svg.replaceAll(
-        "{{codePoint}}",
-        radar.codePoint
     );
 
 
@@ -613,21 +535,6 @@ function generateSVG(
     svg = svg.replaceAll(
         "{{reviewsY}}",
         radar.reviewsY
-    );
-
-
-    /* =====================================================
-       CODE POINT
-    ===================================================== */
-
-    svg = svg.replaceAll(
-        "{{codeX}}",
-        radar.codeX
-    );
-
-    svg = svg.replaceAll(
-        "{{codeY}}",
-        radar.codeY
     );
 
 
@@ -792,3 +699,4 @@ async function main() {
 ========================================================= */
 
 main();
+```
