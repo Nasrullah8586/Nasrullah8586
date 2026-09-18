@@ -4,11 +4,11 @@
 
 ❝ About Me ❞
 
-❶ Student at Manarat International University, Dhaka, Bangladesh  
-❷ Exploring technology and cybersecurity  
-❸ Currently learning Programming, Web Development, Linux, Networking, and Cybersecurity  
-➍ Passionate about coding, problem-solving, and building real-world projects  
-❺ Exploring Python, JavaScript, Git/GitHub, and cybersecurity tools  
+➢ Student at Manarat International University, Dhaka, Bangladesh  
+➢ Exploring technology and cybersecurity  
+➢ Currently learning Programming, Web Development, Linux, Networking, and Cybersecurity  
+➢ Passionate about coding, problem-solving, and building real-world projects  
+➢ Exploring Python, JavaScript, Git/GitHub, and cybersecurity tools  
 
 ---
 
