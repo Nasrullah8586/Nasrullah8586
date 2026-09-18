@@ -1,9 +1,6 @@
-```svg
 <svg width="900" height="470" viewBox="0 0 900 470" xmlns="http://www.w3.org/2000/svg">
 
   <defs>
-
-    <!-- Background -->
 
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#06140f"/>
@@ -11,50 +8,21 @@
       <stop offset="100%" stop-color="#0d2b20"/>
     </linearGradient>
 
-
-    <!-- Radar Fill -->
-
     <linearGradient id="radarFill" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#35C493" stop-opacity="0.38"/>
       <stop offset="100%" stop-color="#176B45" stop-opacity="0.08"/>
     </linearGradient>
 
-
-    <!-- Activity Glow -->
-
-    <filter
-      id="glow"
-      x="-50%"
-      y="-50%"
-      width="200%"
-      height="200%"
-    >
-      <feGaussianBlur
-        stdDeviation="4"
-        result="blur"
-      />
-
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
 
-
-    <!-- Soft Radar Glow -->
-
-    <filter
-      id="softGlow"
-      x="-50%"
-      y="-50%"
-      width="200%"
-      height="200%"
-    >
-      <feGaussianBlur
-        stdDeviation="10"
-        result="blur"
-      />
-
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
@@ -62,11 +30,6 @@
     </filter>
 
   </defs>
-
-
-  <!-- =====================================================
-       BACKGROUND
-  ====================================================== -->
 
   <rect
     width="900"
@@ -85,11 +48,6 @@
     stroke="#176B45"
     stroke-width="2"
   />
-
-
-  <!-- =====================================================
-       HEADER
-  ====================================================== -->
 
   <text
     x="450"
@@ -114,15 +72,7 @@
     Nasrullah8586 · Last 12 Months
   </text>
 
-
-  <!-- =====================================================
-       RADAR
-  ====================================================== -->
-
   <g transform="translate(450 245)">
-
-
-    <!-- Soft outer glow -->
 
     <circle
       cx="0"
@@ -132,13 +82,6 @@
       fill-opacity="0.025"
       filter="url(#softGlow)"
     />
-
-
-    <!-- =================================================
-         RADAR GRID
-    ================================================== -->
-
-    <!-- 100% -->
 
     <rect
       x="-135"
@@ -152,9 +95,6 @@
       opacity="0.95"
     />
 
-
-    <!-- 75% -->
-
     <rect
       x="-101"
       y="-101"
@@ -166,9 +106,6 @@
       stroke-width="1"
       opacity="0.75"
     />
-
-
-    <!-- 50% -->
 
     <rect
       x="-68"
@@ -182,9 +119,6 @@
       opacity="0.65"
     />
 
-
-    <!-- 25% -->
-
     <rect
       x="-34"
       y="-34"
@@ -197,13 +131,6 @@
       opacity="0.55"
     />
 
-
-    <!-- =================================================
-         AXIS LINES
-    ================================================== -->
-
-    <!-- Vertical -->
-
     <line
       x1="0"
       y1="-135"
@@ -213,9 +140,6 @@
       stroke-width="1"
       opacity="0.7"
     />
-
-
-    <!-- Horizontal -->
 
     <line
       x1="-135"
@@ -227,31 +151,14 @@
       opacity="0.7"
     />
 
-
-    <!-- =================================================
-         ACTIVITY SHAPE
-    ================================================== -->
-
     <polygon
-      points="
-        {{commitsPoint}}
-        {{pullRequestsPoint}}
-        {{issuesPoint}}
-        {{reviewsPoint}}
-      "
+      points="{{commitsPoint}} {{pullRequestsPoint}} {{issuesPoint}} {{reviewsPoint}}"
       fill="url(#radarFill)"
       stroke="#35C493"
       stroke-width="3"
       stroke-linejoin="round"
       filter="url(#glow)"
     />
-
-
-    <!-- =================================================
-         ACTIVITY POINTS
-    ================================================== -->
-
-    <!-- Commits -->
 
     <circle
       cx="{{commitsX}}"
@@ -262,9 +169,6 @@
       stroke-width="2"
     />
 
-
-    <!-- Pull Requests -->
-
     <circle
       cx="{{pullRequestsX}}"
       cy="{{pullRequestsY}}"
@@ -273,9 +177,6 @@
       stroke="#ffffff"
       stroke-width="2"
     />
-
-
-    <!-- Issues -->
 
     <circle
       cx="{{issuesX}}"
@@ -286,9 +187,6 @@
       stroke-width="2"
     />
 
-
-    <!-- Reviews -->
-
     <circle
       cx="{{reviewsX}}"
       cy="{{reviewsY}}"
@@ -298,9 +196,6 @@
       stroke-width="2"
     />
 
-
-    <!-- Center -->
-
     <circle
       cx="0"
       cy="0"
@@ -309,11 +204,6 @@
     />
 
   </g>
-
-
-  <!-- =====================================================
-       COMMITS LABEL
-  ====================================================== -->
 
   <text
     x="450"
@@ -338,11 +228,6 @@
     [commits]
   </text>
 
-
-  <!-- =====================================================
-       PULL REQUESTS LABEL
-  ====================================================== -->
-
   <text
     x="610"
     y="248"
@@ -365,11 +250,6 @@
   >
     [pullRequests]
   </text>
-
-
-  <!-- =====================================================
-       ISSUES LABEL
-  ====================================================== -->
 
   <text
     x="450"
@@ -394,11 +274,6 @@
     [issues]
   </text>
 
-
-  <!-- =====================================================
-       CODE REVIEWS LABEL
-  ====================================================== -->
-
   <text
     x="290"
     y="248"
@@ -422,11 +297,6 @@
     [reviews]
   </text>
 
-
-  <!-- =====================================================
-       FOOTER
-  ====================================================== -->
-
   <text
     x="450"
     y="457"
@@ -439,4 +309,3 @@
   </text>
 
 </svg>
-```
