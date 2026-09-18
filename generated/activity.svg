@@ -4,12 +4,15 @@
     height="520"
     viewBox="0 0 900 520"
     role="img"
-    aria-label="GitHub Activity Radar"
+    aria-label="GitHub Activity Overview for 2026"
 >
 
     <defs>
 
-        <!-- Background -->
+        <!-- =================================================
+             BACKGROUND
+        ================================================== -->
+
         <linearGradient
             id="background"
             x1="0%"
@@ -34,7 +37,10 @@
         </linearGradient>
 
 
-        <!-- Activity gradient -->
+        <!-- =================================================
+             ACTIVITY FILL
+        ================================================== -->
+
         <linearGradient
             id="activityGradient"
             x1="0%"
@@ -45,18 +51,21 @@
             <stop
                 offset="0%"
                 stop-color="#35d399"
-                stop-opacity="0.78"
+                stop-opacity="0.30"
             />
 
             <stop
                 offset="100%"
                 stop-color="#159570"
-                stop-opacity="0.42"
+                stop-opacity="0.10"
             />
         </linearGradient>
 
 
-        <!-- Glow -->
+        <!-- =================================================
+             GLOW
+        ================================================== -->
+
         <filter
             id="glow"
             x="-50%"
@@ -64,12 +73,14 @@
             width="200%"
             height="200%"
         >
+
             <feGaussianBlur
-                stdDeviation="5"
+                stdDeviation="4"
                 result="blur"
             />
 
             <feMerge>
+
                 <feMergeNode
                     in="blur"
                 />
@@ -77,11 +88,16 @@
                 <feMergeNode
                     in="SourceGraphic"
                 />
+
             </feMerge>
+
         </filter>
 
 
-        <!-- Soft shadow -->
+        <!-- =================================================
+             SHADOW
+        ================================================== -->
+
         <filter
             id="shadow"
             x="-20%"
@@ -89,20 +105,22 @@
             width="140%"
             height="140%"
         >
+
             <feDropShadow
                 dx="0"
                 dy="8"
                 stdDeviation="12"
                 flood-color="#000000"
-                flood-opacity="0.35"
+                flood-opacity="0.30"
             />
+
         </filter>
 
     </defs>
 
 
     <!-- =====================================================
-         BACKGROUND
+         OUTER BACKGROUND
     ====================================================== -->
 
     <rect
@@ -120,28 +138,54 @@
     ====================================================== -->
 
     <text
-        x="450"
+        x="45"
         y="48"
-        text-anchor="middle"
         font-family="Arial, Helvetica, sans-serif"
-        font-size="24"
+        font-size="23"
         font-weight="700"
         fill="#f1fdf8"
-        letter-spacing="0.5"
     >
-        GitHub Activity
+        Activity overview
     </text>
 
+
     <text
-        x="450"
-        y="73"
-        text-anchor="middle"
+        x="45"
+        y="72"
         font-family="Arial, Helvetica, sans-serif"
         font-size="12"
-        fill="#8faea2"
-        letter-spacing="1"
+        fill="#82a99c"
     >
-        Nasrullah8586 · LAST 12 MONTHS
+        Contribution activity
+    </text>
+
+
+    <!-- =====================================================
+         USER / CURRENT YEAR
+    ====================================================== -->
+
+    <text
+        x="855"
+        y="48"
+        text-anchor="end"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="13"
+        font-weight="700"
+        fill="#d9fff0"
+    >
+        Nasrullah8586
+    </text>
+
+
+    <text
+        x="855"
+        y="70"
+        text-anchor="end"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        fill="#6f9386"
+    >
+        2026
     </text>
 
 
@@ -150,117 +194,260 @@
     ====================================================== -->
 
     <rect
-        x="70"
+        x="38"
         y="100"
-        width="760"
-        height="340"
-        rx="20"
+        width="824"
+        height="350"
+        rx="16"
         fill="#081b15"
-        fill-opacity="0.72"
-        stroke="#17382d"
+        fill-opacity="0.82"
+        stroke="#19382d"
         stroke-width="1"
         filter="url(#shadow)"
     />
 
 
     <!-- =====================================================
-         RADAR CENTER
+         LEFT INFORMATION AREA
     ====================================================== -->
 
-    <!-- Outer radar -->
+    <text
+        x="70"
+        y="136"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        font-weight="700"
+        fill="#d9fff0"
+        letter-spacing="0.3"
+    >
+        Contribution info
+    </text>
+
+
+    <!-- Commits -->
+
+    <circle
+        cx="76"
+        cy="169"
+        r="4"
+        fill="#35d399"
+    />
+
+    <text
+        x="90"
+        y="174"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        fill="#8eada2"
+    >
+        Commits
+    </text>
+
+    <text
+        x="210"
+        y="174"
+        text-anchor="end"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="13"
+        font-weight="700"
+        fill="#d9fff0"
+    >
+        182
+    </text>
+
+
+    <!-- Pull Requests -->
+
+    <circle
+        cx="76"
+        cy="204"
+        r="4"
+        fill="#35d399"
+    />
+
+    <text
+        x="90"
+        y="209"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        fill="#8eada2"
+    >
+        Pull requests
+    </text>
+
+    <text
+        x="210"
+        y="209"
+        text-anchor="end"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="13"
+        font-weight="700"
+        fill="#d9fff0"
+    >
+        0
+    </text>
+
+
+    <!-- Issues -->
+
+    <circle
+        cx="76"
+        cy="239"
+        r="4"
+        fill="#35d399"
+    />
+
+    <text
+        x="90"
+        y="244"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        fill="#8eada2"
+    >
+        Issues
+    </text>
+
+    <text
+        x="210"
+        y="244"
+        text-anchor="end"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="13"
+        font-weight="700"
+        fill="#d9fff0"
+    >
+        0
+    </text>
+
+
+    <!-- Code Reviews -->
+
+    <circle
+        cx="76"
+        cy="274"
+        r="4"
+        fill="#35d399"
+    />
+
+    <text
+        x="90"
+        y="279"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        fill="#8eada2"
+    >
+        Code reviews
+    </text>
+
+    <text
+        x="210"
+        y="279"
+        text-anchor="end"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="13"
+        font-weight="700"
+        fill="#d9fff0"
+    >
+        0
+    </text>
+
+
+    <!-- =====================================================
+         LEFT DIVIDER
+    ====================================================== -->
+
+    <line
+        x1="235"
+        y1="122"
+        x2="235"
+        y2="428"
+        stroke="#19382d"
+        stroke-width="1"
+    />
+
+
+    <!-- =====================================================
+         GRAPH TITLE
+    ====================================================== -->
+
+    <text
+        x="450"
+        y="126"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        font-weight="700"
+        fill="#d9fff0"
+    >
+        2026 activity
+    </text>
+
+
+    <!-- =====================================================
+         GRAPH AXES
+         CENTER = 450,255
+    ====================================================== -->
+
+    <!-- Horizontal axis -->
+
+    <line
+        x1="295"
+        y1="255"
+        x2="605"
+        y2="255"
+        stroke="#315547"
+        stroke-width="1"
+    />
+
+
+    <!-- Vertical axis -->
+
+    <line
+        x1="450"
+        y1="100"
+        x2="450"
+        y2="410"
+        stroke="#315547"
+        stroke-width="1"
+    />
+
+
+    <!-- =====================================================
+         GRAPH GUIDE LEVELS
+    ====================================================== -->
+
     <circle
         cx="450"
-        cy="270"
+        cy="255"
+        r="105"
+        fill="none"
+        stroke="#17382d"
+        stroke-width="1"
+    />
+
+
+    <circle
+        cx="450"
+        cy="255"
         r="155"
         fill="none"
-        stroke="#21493b"
-        stroke-width="1"
-    />
-
-    <!-- Level 75 -->
-    <circle
-        cx="450"
-        cy="270"
-        r="116"
-        fill="none"
-        stroke="#1b3d32"
-        stroke-width="1"
-    />
-
-    <!-- Level 50 -->
-    <circle
-        cx="450"
-        cy="270"
-        r="77"
-        fill="none"
-        stroke="#18382e"
-        stroke-width="1"
-    />
-
-    <!-- Level 25 -->
-    <circle
-        cx="450"
-        cy="270"
-        r="39"
-        fill="none"
-        stroke="#153229"
+        stroke="#17382d"
         stroke-width="1"
     />
 
 
     <!-- =====================================================
-         AXES
-    ====================================================== -->
-
-    <!-- Commits axis -->
-    <line
-        x1="450"
-        y1="270"
-        x2="450"
-        y2="115"
-        stroke="#285344"
-        stroke-width="1"
-    />
-
-    <!-- Pull Requests axis -->
-    <line
-        x1="450"
-        y1="270"
-        x2="605"
-        y2="270"
-        stroke="#285344"
-        stroke-width="1"
-    />
-
-    <!-- Issues axis -->
-    <line
-        x1="450"
-        y1="270"
-        x2="450"
-        y2="425"
-        stroke="#285344"
-        stroke-width="1"
-    />
-
-    <!-- Reviews axis -->
-    <line
-        x1="450"
-        y1="270"
-        x2="295"
-        y2="270"
-        stroke="#285344"
-        stroke-width="1"
-    />
-
-
-    <!-- =====================================================
-         RADAR ACTIVITY
+         ACTIVITY SHAPE
     ====================================================== -->
 
     <polygon
-        points="295.00,255.00 450.00,255.00 450.00,255.00 450.00,255.00"
+        points="
+            450,255
+            450,255
+            450,255
+            295,255.00000000000003
+        "
         fill="url(#activityGradient)"
-        fill-opacity="0.42"
         stroke="#35d399"
         stroke-width="2"
         stroke-linejoin="round"
@@ -269,43 +456,92 @@
 
 
     <!-- =====================================================
+         ACTIVITY CONNECTION LINES
+    ====================================================== -->
+
+    <polyline
+        points="M 295 255
+         L 450 255"
+        fill="none"
+        stroke="#35d399"
+        stroke-width="2"
+        stroke-linecap="round"
+        opacity="0.75"
+    />
+
+
+    <polyline
+        points="M 450 255
+         L 450 255"
+        fill="none"
+        stroke="#35d399"
+        stroke-width="2"
+        stroke-linecap="round"
+        opacity="0.75"
+    />
+
+
+    <!-- =====================================================
          ACTIVITY POINTS
     ====================================================== -->
+
+    <!-- Code Reviews -->
+
+    <circle
+        cx="450.00"
+        cy="255.00"
+        r="5"
+        fill="#35d399"
+        stroke="#e1fff3"
+        stroke-width="2"
+    />
+
+
+    <!-- Issues -->
+
+    <circle
+        cx="450.00"
+        cy="255.00"
+        r="5"
+        fill="#35d399"
+        stroke="#e1fff3"
+        stroke-width="2"
+    />
+
+
+    <!-- Pull Requests -->
+
+    <circle
+        cx="450.00"
+        cy="255.00"
+        r="5"
+        fill="#35d399"
+        stroke="#e1fff3"
+        stroke-width="2"
+    />
+
+
+    <!-- Commits -->
 
     <circle
         cx="295.00"
         cy="255.00"
         r="5"
         fill="#35d399"
-        stroke="#d9fff0"
+        stroke="#e1fff3"
         stroke-width="2"
     />
 
-    <circle
-        cx="450.00"
-        cy="255.00"
-        r="5"
-        fill="#35d399"
-        stroke="#d9fff0"
-        stroke-width="2"
-    />
+
+    <!-- =====================================================
+         CENTER POINT
+    ====================================================== -->
 
     <circle
-        cx="450.00"
-        cy="255.00"
-        r="5"
-        fill="#35d399"
-        stroke="#d9fff0"
-        stroke-width="2"
-    />
-
-    <circle
-        cx="450.00"
-        cy="255.00"
-        r="5"
-        fill="#35d399"
-        stroke="#d9fff0"
-        stroke-width="2"
+        cx="450"
+        cy="255"
+        r="4"
+        fill="#e1fff3"
     />
 
 
@@ -313,88 +549,14 @@
          AXIS LABELS
     ====================================================== -->
 
-    <!-- Commits -->
-    <text
-        x="450"
-        y="118"
-        text-anchor="middle"
-        font-family="Arial, Helvetica, sans-serif"
-        font-size="13"
-        font-weight="700"
-        fill="#d9fff0"
-    >
-        Commits
-    </text>
-
-    <text
-        x="450"
-        y="136"
-        text-anchor="middle"
-        font-family="Arial, Helvetica, sans-serif"
-        font-size="11"
-        fill="#7fa99a"
-    >
-        179 · 100%
-    </text>
-
-
-    <!-- Pull Requests -->
-    <text
-        x="625"
-        y="265"
-        text-anchor="start"
-        font-family="Arial, Helvetica, sans-serif"
-        font-size="13"
-        font-weight="700"
-        fill="#d9fff0"
-    >
-        Pull Requests
-    </text>
-
-    <text
-        x="625"
-        y="283"
-        text-anchor="start"
-        font-family="Arial, Helvetica, sans-serif"
-        font-size="11"
-        fill="#7fa99a"
-    >
-        0 · 0%
-    </text>
-
-
-    <!-- Issues -->
-    <text
-        x="450"
-        y="421"
-        text-anchor="middle"
-        font-family="Arial, Helvetica, sans-serif"
-        font-size="13"
-        font-weight="700"
-        fill="#d9fff0"
-    >
-        Issues
-    </text>
-
-    <text
-        x="450"
-        y="402"
-        text-anchor="middle"
-        font-family="Arial, Helvetica, sans-serif"
-        font-size="11"
-        fill="#7fa99a"
-    >
-        0 · 0%
-    </text>
-
-
     <!-- Code Reviews -->
+
     <text
-        x="275"
-        y="265"
-        text-anchor="end"
+        x="450"
+        y="116"
+        text-anchor="middle"
         font-family="Arial, Helvetica, sans-serif"
-        font-size="13"
+        font-size="11"
         font-weight="700"
         fill="#d9fff0"
     >
@@ -402,27 +564,234 @@
     </text>
 
     <text
-        x="275"
-        y="283"
-        text-anchor="end"
+        x="450"
+        y="132"
+        text-anchor="middle"
         font-family="Arial, Helvetica, sans-serif"
-        font-size="11"
-        fill="#7fa99a"
+        font-size="9"
+        fill="#6f9386"
     >
         0 · 0%
     </text>
 
 
+    <!-- Issues -->
+
+    <text
+        x="615"
+        y="251"
+        text-anchor="start"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="11"
+        font-weight="700"
+        fill="#d9fff0"
+    >
+        Issues
+    </text>
+
+    <text
+        x="615"
+        y="267"
+        text-anchor="start"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="9"
+        fill="#6f9386"
+    >
+        0 · 0%
+    </text>
+
+
+    <!-- Pull Requests -->
+
+    <text
+        x="450"
+        y="416"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="11"
+        font-weight="700"
+        fill="#d9fff0"
+    >
+        Pull Requests
+    </text>
+
+    <text
+        x="450"
+        y="432"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="9"
+        fill="#6f9386"
+    >
+        0 · 0%
+    </text>
+
+
+    <!-- Commits -->
+
+    <text
+        x="285"
+        y="251"
+        text-anchor="end"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="11"
+        font-weight="700"
+        fill="#d9fff0"
+    >
+        Commits
+    </text>
+
+    <text
+        x="285"
+        y="267"
+        text-anchor="end"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="9"
+        fill="#6f9386"
+    >
+        182 · 100%
+    </text>
+
+
     <!-- =====================================================
-         CENTER
+         RIGHT DIVIDER
     ====================================================== -->
 
-    <circle
-        cx="450"
-        cy="270"
-        r="4"
-        fill="#d9fff0"
+    <line
+        x1="700"
+        y1="122"
+        x2="700"
+        y2="428"
+        stroke="#19382d"
+        stroke-width="1"
     />
+
+
+    <!-- =====================================================
+         YEAR NAVIGATION
+    ====================================================== -->
+
+    <text
+        x="780"
+        y="136"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="11"
+        font-weight="700"
+        fill="#7fa99a"
+        letter-spacing="0.4"
+    >
+        YEAR
+    </text>
+
+
+    <!-- Current / selected year -->
+
+    <rect
+        x="750"
+        y="151"
+        width="60"
+        height="32"
+        rx="8"
+        fill="#176b45"
+        stroke="#35d399"
+        stroke-width="1"
+    />
+
+    <text
+        x="780"
+        y="172"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        font-weight="700"
+        fill="#ffffff"
+    >
+        2026
+    </text>
+
+
+    <!-- Dynamic Year 1 -->
+
+    <text
+        x="780"
+        y="207"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="11"
+        fill="#66877b"
+    >
+        2025
+    </text>
+
+
+    <!-- Dynamic Year 2 -->
+
+    <text
+        x="780"
+        y="238"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="11"
+        fill="#66877b"
+    >
+        
+    </text>
+
+
+    <!-- Dynamic Year 3 -->
+
+    <text
+        x="780"
+        y="269"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="11"
+        fill="#66877b"
+    >
+        
+    </text>
+
+
+    <!-- Dynamic Year 4 -->
+
+    <text
+        x="780"
+        y="300"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="11"
+        fill="#66877b"
+    >
+        
+    </text>
+
+
+    <!-- =====================================================
+         YEAR INFORMATION
+    ====================================================== -->
+
+    <text
+        x="780"
+        y="348"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="9"
+        fill="#49675d"
+    >
+        Available
+    </text>
+
+    <text
+        x="780"
+        y="363"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="9"
+        fill="#49675d"
+    >
+        contribution years
+    </text>
 
 
     <!-- =====================================================
@@ -431,25 +800,26 @@
 
     <text
         x="450"
-        y="475"
+        y="476"
         text-anchor="middle"
         font-family="Arial, Helvetica, sans-serif"
-        font-size="11"
+        font-size="10"
         fill="#66877b"
-        letter-spacing="0.4"
+        letter-spacing="0.3"
     >
         Contribution activity · Updated automatically
     </text>
 
+
     <text
         x="450"
-        y="494"
+        y="495"
         text-anchor="middle"
         font-family="Arial, Helvetica, sans-serif"
-        font-size="10"
+        font-size="9"
         fill="#49675d"
     >
-        Sep 18, 2026
+        Updated 2026-09-18
     </text>
 
 </svg>
