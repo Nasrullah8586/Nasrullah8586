@@ -1,4 +1,3 @@
-
 const fs = require("fs");
 const path = require("path");
 
@@ -7,37 +6,53 @@ const path = require("path");
 ========================================================= */
 
 const GITHUB_USERNAME = "Nasrullah8586";
-const GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
 
-const TEMPLATE_PATH = path.join(__dirname, "template.svg");
-const OUTPUT_DIR = path.join(__dirname, "..", "generated");
-const OUTPUT_PATH = path.join(OUTPUT_DIR, "activity.svg");
+const GITHUB_GRAPHQL_URL =
+    "https://api.github.com/graphql";
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const TEMPLATE_PATH =
+    path.join(__dirname, "template.svg");
+
+const OUTPUT_DIR =
+    path.join(__dirname, "..", "generated");
+
+const OUTPUT_PATH =
+    path.join(OUTPUT_DIR, "activity.svg");
+
+const GITHUB_TOKEN =
+    process.env.GITHUB_TOKEN;
 
 
 /* =========================================================
-   VALIDATE TOKEN
+   VALIDATE GITHUB TOKEN
 ========================================================= */
 
 if (!GITHUB_TOKEN) {
-    console.error("❌ GITHUB_TOKEN is missing.");
+    console.error(
+        "❌ GITHUB_TOKEN is missing."
+    );
+
     process.exit(1);
 }
 
 
 /* =========================================================
-   DATE RANGE
-   Last 12 months
+   LAST 12 MONTHS
 ========================================================= */
 
 const today = new Date();
 
 const fromDate = new Date(today);
-fromDate.setFullYear(fromDate.getFullYear() - 1);
 
-const from = fromDate.toISOString();
-const to = today.toISOString();
+fromDate.setFullYear(
+    fromDate.getFullYear() - 1
+);
+
+const from =
+    fromDate.toISOString();
+
+const to =
+    today.toISOString();
 
 
 /* =========================================================
@@ -51,17 +66,21 @@ const query = `
         $to: DateTime!
     ) {
         user(login: $username) {
+
             contributionsCollection(
                 from: $from
                 to: $to
             ) {
+
                 totalCommitContributions
+
                 totalIssueContributions
+
                 totalPullRequestContributions
+
                 totalPullRequestReviewContributions
-                contributionCalendar {
-                    totalContributions
-                }
+
+                totalRepositoriesWithContributedCommits
             }
         }
     }
@@ -73,173 +92,277 @@ const query = `
 ========================================================= */
 
 async function getGitHubActivity() {
-    const response = await fetch(GITHUB_GRAPHQL_URL, {
-        method: "POST",
 
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${GITHUB_TOKEN}`,
-            "User-Agent": GITHUB_USERNAME
-        },
+    const response =
+        await fetch(
+            GITHUB_GRAPHQL_URL,
+            {
+                method: "POST",
 
-        body: JSON.stringify({
-            query,
+                headers: {
+                    "Content-Type":
+                        "application/json",
 
-            variables: {
-                username: GITHUB_USERNAME,
-                from,
-                to
+                    "Authorization":
+                        `Bearer ${GITHUB_TOKEN}`,
+
+                    "User-Agent":
+                        GITHUB_USERNAME
+                },
+
+                body: JSON.stringify({
+                    query,
+
+                    variables: {
+                        username:
+                            GITHUB_USERNAME,
+
+                        from,
+
+                        to
+                    }
+                })
             }
-        })
-    });
+        );
+
 
     if (!response.ok) {
+
         throw new Error(
             `GitHub API request failed: ${response.status} ${response.statusText}`
         );
     }
 
-    const result = await response.json();
+
+    const result =
+        await response.json();
+
 
     if (result.errors) {
-        console.error(result.errors);
-        throw new Error("GitHub GraphQL returned an error.");
+
+        console.error(
+            "GitHub GraphQL errors:"
+        );
+
+        console.error(
+            JSON.stringify(
+                result.errors,
+                null,
+                2
+            )
+        );
+
+        throw new Error(
+            "GitHub GraphQL returned an error."
+        );
     }
 
-    if (!result.data || !result.data.user) {
-        throw new Error("GitHub user data was not found.");
+
+    if (
+        !result.data ||
+        !result.data.user
+    ) {
+
+        throw new Error(
+            "GitHub user was not found."
+        );
     }
 
-    return result.data.user.contributionsCollection;
+
+    return (
+        result.data.user
+            .contributionsCollection
+    );
 }
 
 
 /* =========================================================
-   CALCULATE PERCENTAGES
+   GET RAW ACTIVITY VALUES
 ========================================================= */
 
-function calculatePercentages(activity) {
+function getRawActivity(
+    activity
+) {
 
-    const commits =
-        activity.totalCommitContributions || 0;
+    return {
 
-    const issues =
-        activity.totalIssueContributions || 0;
+        /*
+         * CODE
+         *
+         * Number of repositories where
+         * the user contributed commits.
+         *
+         * This is an official GitHub
+         * contribution field.
+         */
 
-    const pullRequests =
-        activity.totalPullRequestContributions || 0;
-
-    const reviews =
-        activity.totalPullRequestReviewContributions || 0;
-
-    const totalContributions =
-        activity.contributionCalendar?.totalContributions || 0;
-
-
-    /*
-        GitHub does not provide a direct "Code" metric.
-
-        We derive Code activity from the remaining contribution
-        activity after Issues, Pull Requests and Reviews.
-
-        It is clamped to zero so the value can never become negative.
-    */
-
-    const code =
-        Math.max(
-            0,
-            totalContributions -
-            issues -
-            pullRequests -
-            reviews
-        );
+        code:
+            activity
+                .totalRepositoriesWithContributedCommits
+            || 0,
 
 
-    /*
-        Raw activity values
-    */
+        /*
+         * COMMITS
+         */
 
-    const rawValues = {
-        commits,
-        pullRequests,
-        issues,
-        reviews,
-        code
+        commits:
+            activity
+                .totalCommitContributions
+            || 0,
+
+
+        /*
+         * PULL REQUESTS
+         */
+
+        pullRequests:
+            activity
+                .totalPullRequestContributions
+            || 0,
+
+
+        /*
+         * ISSUES
+         */
+
+        issues:
+            activity
+                .totalIssueContributions
+            || 0,
+
+
+        /*
+         * CODE REVIEWS
+         */
+
+        reviews:
+            activity
+                .totalPullRequestReviewContributions
+            || 0
     };
+}
+
+
+/* =========================================================
+   NORMALIZE VALUES TO PERCENTAGE
+========================================================= */
+
+function calculatePercentages(
+    raw
+) {
+
+    const values = [
+        raw.code,
+        raw.commits,
+        raw.pullRequests,
+        raw.issues,
+        raw.reviews
+    ];
 
 
     /*
-        The largest activity becomes 100%.
-        Other activities are scaled relative to it.
-    */
+     * The largest activity value
+     * becomes 100%.
+     */
 
     const maxValue =
-        Math.max(...Object.values(rawValues));
+        Math.max(...values);
 
+
+    /*
+     * If there is no activity.
+     */
 
     if (maxValue === 0) {
+
         return {
+
+            code: 0,
+
             commits: 0,
+
             pullRequests: 0,
+
             issues: 0,
-            reviews: 0,
-            code: 0
+
+            reviews: 0
         };
     }
 
 
     return {
-        commits: Math.round((commits / maxValue) * 100),
-
-        pullRequests:
-            Math.round((pullRequests / maxValue) * 100),
-
-        issues:
-            Math.round((issues / maxValue) * 100),
-
-        reviews:
-            Math.round((reviews / maxValue) * 100),
 
         code:
-            Math.round((code / maxValue) * 100)
+            Math.round(
+                (raw.code / maxValue) * 100
+            ),
+
+        commits:
+            Math.round(
+                (raw.commits / maxValue) * 100
+            ),
+
+        pullRequests:
+            Math.round(
+                (raw.pullRequests / maxValue) * 100
+            ),
+
+        issues:
+            Math.round(
+                (raw.issues / maxValue) * 100
+            ),
+
+        reviews:
+            Math.round(
+                (raw.reviews / maxValue) * 100
+            )
     };
 }
 
 
 /* =========================================================
-   RADAR POINTS
+   CREATE RADAR POINTS
 ========================================================= */
 
-function createRadarPoints(percentages) {
+function createRadarPoints(
+    percentages
+) {
 
     const MAX_RADIUS = 135;
 
 
     /*
-        5-axis radar coordinates
+     * Five-axis radar positions
+     *
+     *                 COMMITS
+     *                    |
+     *                    |
+     *        CODE        |       PULL REQUESTS
+     *          \         |        /
+     *           \        |       /
+     *            \       |      /
+     *             \      |     /
+     *              \     |    /
+     *               \    |   /
+     *                \   |  /
+     *                 \  | /
+     *                  \ |/
+     *                   \/
+     *                   /\
+     *                  /  \
+     *                 /    \
+     *                /      \
+     *       REVIEWS /        \ ISSUES
+     *
+     */
 
-                  Commits
-                    |
-                    |
-          Code     |     Pull Requests
-             \     |     /
-              \    |    /
-               \   |   /
-                \  |  /
-                 \ | /
-                  \|/
-                  /\
-                 /  \
-                /    \
-        Reviews /      \ Issues
-    */
 
-
-    const points = {
+    const positions = {
 
         commits: {
             x: 0,
-            y: -MAX_RADIUS
+            y: -135
         },
 
         pullRequests: {
@@ -264,52 +387,52 @@ function createRadarPoints(percentages) {
     };
 
 
-    /*
-        Convert percentage into distance from center.
-    */
+    /* =====================================================
+       SCALE EACH AXIS
+    ===================================================== */
 
     const commitsX =
-        points.commits.x *
+        positions.commits.x *
         (percentages.commits / 100);
 
     const commitsY =
-        points.commits.y *
+        positions.commits.y *
         (percentages.commits / 100);
 
 
     const pullRequestsX =
-        points.pullRequests.x *
+        positions.pullRequests.x *
         (percentages.pullRequests / 100);
 
     const pullRequestsY =
-        points.pullRequests.y *
+        positions.pullRequests.y *
         (percentages.pullRequests / 100);
 
 
     const issuesX =
-        points.issues.x *
+        positions.issues.x *
         (percentages.issues / 100);
 
     const issuesY =
-        points.issues.y *
+        positions.issues.y *
         (percentages.issues / 100);
 
 
     const reviewsX =
-        points.reviews.x *
+        positions.reviews.x *
         (percentages.reviews / 100);
 
     const reviewsY =
-        points.reviews.y *
+        positions.reviews.y *
         (percentages.reviews / 100);
 
 
     const codeX =
-        points.code.x *
+        positions.code.x *
         (percentages.code / 100);
 
     const codeY =
-        points.code.y *
+        positions.code.y *
         (percentages.code / 100);
 
 
@@ -330,6 +453,7 @@ function createRadarPoints(percentages) {
         codePoint:
             `${codeX},${codeY}`,
 
+
         commitsX,
         commitsY,
 
@@ -349,15 +473,19 @@ function createRadarPoints(percentages) {
 
 
 /* =========================================================
-   REPLACE TEMPLATE PLACEHOLDERS
+   GENERATE SVG
 ========================================================= */
 
-function generateSVG(percentages, radar) {
+function generateSVG(
+    percentages,
+    radar
+) {
 
-    let svg = fs.readFileSync(
-        TEMPLATE_PATH,
-        "utf8"
-    );
+    let svg =
+        fs.readFileSync(
+            TEMPLATE_PATH,
+            "utf8"
+        );
 
 
     /* =====================================================
@@ -365,28 +493,32 @@ function generateSVG(percentages, radar) {
     ===================================================== */
 
     svg = svg.replaceAll(
+        "[code]",
+        `${percentages.code}%`
+    );
+
+
+    svg = svg.replaceAll(
         "[commits]",
         `${percentages.commits}%`
     );
+
 
     svg = svg.replaceAll(
         "[pullRequests]",
         `${percentages.pullRequests}%`
     );
 
+
     svg = svg.replaceAll(
         "[issues]",
         `${percentages.issues}%`
     );
 
+
     svg = svg.replaceAll(
         "[reviews]",
         `${percentages.reviews}%`
-    );
-
-    svg = svg.replaceAll(
-        "[code]",
-        `${percentages.code}%`
     );
 
 
@@ -399,20 +531,24 @@ function generateSVG(percentages, radar) {
         radar.commitsPoint
     );
 
+
     svg = svg.replaceAll(
         "{{pullRequestsPoint}}",
         radar.pullRequestsPoint
     );
+
 
     svg = svg.replaceAll(
         "{{issuesPoint}}",
         radar.issuesPoint
     );
 
+
     svg = svg.replaceAll(
         "{{reviewsPoint}}",
         radar.reviewsPoint
     );
+
 
     svg = svg.replaceAll(
         "{{codePoint}}",
@@ -421,7 +557,7 @@ function generateSVG(percentages, radar) {
 
 
     /* =====================================================
-       RADAR CIRCLE POSITIONS
+       COMMITS POINT
     ===================================================== */
 
     svg = svg.replaceAll(
@@ -435,6 +571,10 @@ function generateSVG(percentages, radar) {
     );
 
 
+    /* =====================================================
+       PULL REQUESTS POINT
+    ===================================================== */
+
     svg = svg.replaceAll(
         "{{pullRequestsX}}",
         radar.pullRequestsX
@@ -445,6 +585,10 @@ function generateSVG(percentages, radar) {
         radar.pullRequestsY
     );
 
+
+    /* =====================================================
+       ISSUES POINT
+    ===================================================== */
 
     svg = svg.replaceAll(
         "{{issuesX}}",
@@ -457,6 +601,10 @@ function generateSVG(percentages, radar) {
     );
 
 
+    /* =====================================================
+       CODE REVIEWS POINT
+    ===================================================== */
+
     svg = svg.replaceAll(
         "{{reviewsX}}",
         radar.reviewsX
@@ -467,6 +615,10 @@ function generateSVG(percentages, radar) {
         radar.reviewsY
     );
 
+
+    /* =====================================================
+       CODE POINT
+    ===================================================== */
 
     svg = svg.replaceAll(
         "{{codeX}}",
@@ -491,41 +643,95 @@ async function main() {
 
     try {
 
-        console.log("🚀 GitHub Activity Generator started...");
-
         console.log(
-            `📊 Fetching activity for ${GITHUB_USERNAME}...`
+            "🚀 GitHub Activity Generator started..."
         );
 
 
-        /* Get GitHub activity */
+        console.log(
+            `👤 User: ${GITHUB_USERNAME}`
+        );
+
+
+        console.log(
+            "📅 Range: Last 12 months"
+        );
+
+
+        /* =================================================
+           FETCH DATA
+        ================================================= */
 
         const activity =
             await getGitHubActivity();
 
 
-        console.log("✅ GitHub activity received.");
-
-
-        /* Calculate percentages */
-
-        const percentages =
-            calculatePercentages(activity);
-
-
         console.log(
-            "📈 Activity percentages:",
-            percentages
+            "✅ GitHub activity received."
         );
 
 
-        /* Calculate radar coordinates */
+        /* =================================================
+           RAW VALUES
+        ================================================= */
+
+        const raw =
+            getRawActivity(
+                activity
+            );
+
+
+        console.log(
+            "📊 Raw GitHub activity:"
+        );
+
+
+        console.log(
+            JSON.stringify(
+                raw,
+                null,
+                2
+            )
+        );
+
+
+        /* =================================================
+           PERCENTAGES
+        ================================================= */
+
+        const percentages =
+            calculatePercentages(
+                raw
+            );
+
+
+        console.log(
+            "📈 Radar percentages:"
+        );
+
+
+        console.log(
+            JSON.stringify(
+                percentages,
+                null,
+                2
+            )
+        );
+
+
+        /* =================================================
+           RADAR COORDINATES
+        ================================================= */
 
         const radar =
-            createRadarPoints(percentages);
+            createRadarPoints(
+                percentages
+            );
 
 
-        /* Generate SVG */
+        /* =================================================
+           GENERATE SVG
+        ================================================= */
 
         const svg =
             generateSVG(
@@ -534,7 +740,9 @@ async function main() {
             );
 
 
-        /* Create generated folder */
+        /* =================================================
+           CREATE OUTPUT DIRECTORY
+        ================================================= */
 
         fs.mkdirSync(
             OUTPUT_DIR,
@@ -544,7 +752,9 @@ async function main() {
         );
 
 
-        /* Save SVG */
+        /* =================================================
+           WRITE SVG
+        ================================================= */
 
         fs.writeFileSync(
             OUTPUT_PATH,
@@ -554,17 +764,23 @@ async function main() {
 
 
         console.log(
-            `✅ Activity SVG generated: ${OUTPUT_PATH}`
+            `✅ SVG generated successfully: ${OUTPUT_PATH}`
         );
 
+
+        console.log(
+            "🎉 GitHub Activity update completed."
+        );
 
     } catch (error) {
 
         console.error(
-            "❌ Activity generator failed:"
+            "❌ Activity generator failed."
         );
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         process.exit(1);
     }
@@ -572,7 +788,7 @@ async function main() {
 
 
 /* =========================================================
-   RUN
+   START
 ========================================================= */
 
 main();
