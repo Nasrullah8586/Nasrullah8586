@@ -206,9 +206,7 @@ fill="#35C493"
 
 >
 
-```
-{{commits}}
-```
+[commits]
 
   </text>
 
@@ -222,9 +220,7 @@ fill="#35C493"
 
 >
 
-```
-{{pullRequests}}
-```
+[pullRequests]
 
   </text>
 
@@ -238,9 +234,7 @@ fill="#35C493"
 
 >
 
-```
-{{issues}}
-```
+[issues]
 
   </text>
 
@@ -254,9 +248,7 @@ fill="#35C493"
 
 >
 
-```
-{{reviews}}
-```
+[reviews]
 
   </text>
 
@@ -270,9 +262,8 @@ fill="#35C493"
 
 >
 
-```
-{{code}}
-```
+[code]
+
 
   </text>
 
