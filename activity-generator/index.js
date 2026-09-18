@@ -15,26 +15,6 @@ const TEMPLATE_FILE = path.join(
     "template.svg"
 );
 
-
-/* =========================================================
-   YEAR CONFIGURATION
-========================================================= */
-
-const START_YEAR = 2022;
-
-const CURRENT_YEAR = new Date().getUTCFullYear();
-
-const YEARS = [];
-
-for (
-    let year = CURRENT_YEAR;
-    year >= START_YEAR;
-    year--
-) {
-    YEARS.push(year);
-}
-
-
 /* =========================================================
    GITHUB GRAPHQL
 ========================================================= */
@@ -61,7 +41,77 @@ query(
 
 
 /* =========================================================
-   GET YEAR RANGE
+   GRAPHQL QUERY FOR AVAILABLE CONTRIBUTION YEARS
+========================================================= */
+
+const YEARS_QUERY = `
+query($login: String!) {
+    user(login: $login) {
+        contributionsCollection {
+            contributionYears
+        }
+    }
+}
+`;
+
+
+/* =========================================================
+   CURRENT YEAR
+========================================================= */
+
+const CURRENT_YEAR = new Date().getUTCFullYear();
+
+
+/* =========================================================
+   FETCH AVAILABLE GITHUB YEARS
+========================================================= */
+
+async function fetchContributionYears() {
+    const response = await fetch(GITHUB_API, {
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            query: YEARS_QUERY,
+
+            variables: {
+                login: GITHUB_USERNAME
+            }
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            `GitHub API error: ${response.status} ${response.statusText}`
+        );
+    }
+
+    const result = await response.json();
+
+    if (result.errors) {
+        throw new Error(
+            result.errors
+                .map(error => error.message)
+                .join(", ")
+        );
+    }
+
+    const years =
+        result?.data?.user?.contributionsCollection?.contributionYears || [];
+
+    return years
+        .map(Number)
+        .filter(year => !Number.isNaN(year))
+        .filter(year => year <= CURRENT_YEAR)
+        .sort((a, b) => b - a);
+}
+
+
+/* =========================================================
+   YEAR RANGE
 ========================================================= */
 
 function getYearRange(year) {
@@ -74,122 +124,85 @@ function getYearRange(year) {
 
 
 /* =========================================================
-   FETCH GITHUB ACTIVITY
+   FETCH GITHUB ACTIVITY FOR A YEAR
 ========================================================= */
 
 async function fetchGitHubActivity(year) {
-    const token = process.env.GITHUB_TOKEN;
+    const { from, to } = getYearRange(year);
 
-    if (!token) {
-        throw new Error(
-            "GITHUB_TOKEN is not available."
-        );
-    }
+    const response = await fetch(GITHUB_API, {
+        method: "POST",
 
-    const range = getYearRange(year);
+        headers: {
+            "Content-Type": "application/json"
+        },
 
-    const response = await fetch(
-        GITHUB_API,
-        {
-            method: "POST",
+        body: JSON.stringify({
+            query: QUERY,
 
-            headers: {
-                "Content-Type": "application/json",
-
-                Authorization:
-                    `Bearer ${token}`
-            },
-
-            body: JSON.stringify({
-                query: QUERY,
-
-                variables: {
-                    login: GITHUB_USERNAME,
-
-                    from: range.from,
-
-                    to: range.to
-                }
-            })
-        }
-    );
+            variables: {
+                login: GITHUB_USERNAME,
+                from,
+                to
+            }
+        })
+    });
 
     if (!response.ok) {
         throw new Error(
-            `GitHub API request failed for ${year}: ${response.status}`
+            `GitHub API error for ${year}: ${response.status} ${response.statusText}`
         );
     }
 
-    const result =
-        await response.json();
+    const result = await response.json();
 
     if (result.errors) {
-        console.error(
-            result.errors
-        );
-
         throw new Error(
-            `GitHub GraphQL returned an error for ${year}.`
+            result.errors
+                .map(error => error.message)
+                .join(", ")
         );
     }
 
-    if (
-        !result.data ||
-        !result.data.user ||
-        !result.data.user.contributionsCollection
-    ) {
+    const contributions =
+        result?.data?.user?.contributionsCollection;
+
+    if (!contributions) {
         throw new Error(
             `No contribution data found for ${year}.`
         );
     }
 
-    return result.data.user.contributionsCollection;
+    return contributions;
 }
 
 
 /* =========================================================
-   RAW ACTIVITY DATA
+   RAW ACTIVITY
 ========================================================= */
 
-function getRawActivity(data) {
+function getRawActivity(activity) {
     return {
         commits:
-            data.totalCommitContributions || 0,
+            Number(activity.totalCommitContributions) || 0,
 
         pullRequests:
-            data.totalPullRequestContributions || 0,
+            Number(activity.totalPullRequestContributions) || 0,
 
         issues:
-            data.totalIssueContributions || 0,
+            Number(activity.totalIssueContributions) || 0,
 
         reviews:
-            data.totalPullRequestReviewContributions || 0
+            Number(
+                activity.totalPullRequestReviewContributions
+            ) || 0
     };
 }
 
 
 /* =========================================================
-   ACTIVITY SCALE
+   SCALE
 ========================================================= */
-
-/*
-    Each activity is compared against the strongest
-    activity of the selected year.
-
-    Example:
-
-    Commits       = 100
-    Pull Requests = 40
-    Issues        = 20
-    Reviews       = 60
-
-    Scale:
-
-    Commits       = 1.00
-    Pull Requests = 0.40
-    Issues        = 0.20
-    Reviews       = 0.60
-*/
 
 function calculateScale(activity) {
     const values = [
@@ -199,27 +212,18 @@ function calculateScale(activity) {
         activity.reviews
     ];
 
-    const maximum =
-        Math.max(...values, 1);
+    const maxValue = Math.max(...values);
 
-    return {
-        commits:
-            activity.commits / maximum,
+    if (maxValue === 0) {
+        return 0;
+    }
 
-        pullRequests:
-            activity.pullRequests / maximum,
-
-        issues:
-            activity.issues / maximum,
-
-        reviews:
-            activity.reviews / maximum
-    };
+    return 1 / maxValue;
 }
 
 
 /* =========================================================
-   DISPLAY PERCENTAGES
+   PERCENTAGES
 ========================================================= */
 
 function calculatePercentages(activity) {
@@ -230,61 +234,48 @@ function calculatePercentages(activity) {
         activity.reviews
     ];
 
-    const maximum =
-        Math.max(...values, 1);
+    const total = values.reduce(
+        (sum, value) => sum + value,
+        0
+    );
+
+    if (total === 0) {
+        return {
+            commits: 0,
+            pullRequests: 0,
+            issues: 0,
+            reviews: 0
+        };
+    }
 
     return {
-        commits:
-            Math.round(
-                (activity.commits / maximum) * 100
-            ),
+        commits: Math.round(
+            (activity.commits / total) * 100
+        ),
 
-        pullRequests:
-            Math.round(
-                (activity.pullRequests / maximum) * 100
-            ),
+        pullRequests: Math.round(
+            (activity.pullRequests / total) * 100
+        ),
 
-        issues:
-            Math.round(
-                (activity.issues / maximum) * 100
-            ),
+        issues: Math.round(
+            (activity.issues / total) * 100
+        ),
 
-        reviews:
-            Math.round(
-                (activity.reviews / maximum) * 100
-            )
+        reviews: Math.round(
+            (activity.reviews / total) * 100
+        )
     };
 }
 
 
 /* =========================================================
-   ACTIVITY GRAPH CONFIGURATION
+   GRAPH CONFIGURATION
 ========================================================= */
 
 const CENTER_X = 450;
 const CENTER_Y = 255;
 
 const RADIUS = 155;
-
-
-/* =========================================================
-   AXIS POSITIONS
-========================================================= */
-
-/*
-                     CODE REVIEWS
-                           ↑
-                           |
-                           |
-                           |
-    COMMITS ←──────────────●──────────────→ ISSUES
-                           |
-                           |
-                           |
-                           ↓
-                    PULL REQUESTS
-*/
-
 
 const AXES = {
     reviews: {
@@ -306,382 +297,311 @@ const AXES = {
 
 
 /* =========================================================
-   POLAR → CARTESIAN
+   ACTIVITY POINTS
 ========================================================= */
 
-function polarToCartesian(
-    angle,
-    distance
-) {
-    const radians =
-        angle * Math.PI / 180;
+function createActivityPoints(scale, activity) {
+    function pointFor(value, angle) {
+        const distance = value * scale * RADIUS;
+
+        const radians =
+            (angle * Math.PI) / 180;
+
+        return {
+            x:
+                CENTER_X +
+                Math.cos(radians) * distance,
+
+            y:
+                CENTER_Y +
+                Math.sin(radians) * distance
+        };
+    }
 
     return {
-        x:
-            CENTER_X +
-            Math.cos(radians) * distance,
+        reviews: pointFor(
+            activity.reviews,
+            AXES.reviews.angle
+        ),
 
-        y:
-            CENTER_Y +
-            Math.sin(radians) * distance
+        issues: pointFor(
+            activity.issues,
+            AXES.issues.angle
+        ),
+
+        pullRequests: pointFor(
+            activity.pullRequests,
+            AXES.pullRequests.angle
+        ),
+
+        commits: pointFor(
+            activity.commits,
+            AXES.commits.angle
+        )
     };
 }
 
 
 /* =========================================================
-   CREATE ACTIVITY POINTS
-========================================================= */
-
-function createActivityPoints(scale) {
-    const reviews =
-        polarToCartesian(
-            AXES.reviews.angle,
-            RADIUS * scale.reviews
-        );
-
-    const issues =
-        polarToCartesian(
-            AXES.issues.angle,
-            RADIUS * scale.issues
-        );
-
-    const pullRequests =
-        polarToCartesian(
-            AXES.pullRequests.angle,
-            RADIUS * scale.pullRequests
-        );
-
-    const commits =
-        polarToCartesian(
-            AXES.commits.angle,
-            RADIUS * scale.commits
-        );
-
-    return {
-        reviews,
-        issues,
-        pullRequests,
-        commits
-    };
-}
-
-
-/* =========================================================
-   FORMAT SVG POINT
-========================================================= */
-
-function pointToString(point) {
-    return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
-}
-
-
-/* =========================================================
-   CREATE ACTIVITY LINE
-========================================================= */
-
-function createActivityLine(
-    firstPoint,
-    secondPoint
-) {
-    return [
-        pointToString(firstPoint),
-        pointToString(secondPoint)
-    ].join(" ");
-}
-
-
-/* =========================================================
-   CREATE DATE
-========================================================= */
-
-function getUpdatedDate() {
-    return new Date().toLocaleDateString(
-        "en-US",
-        {
-            year: "numeric",
-
-            month: "short",
-
-            day: "numeric",
-
-            timeZone: "UTC"
-        }
-    );
-}
-
-
-/* =========================================================
-   GENERATE SVG
+   SVG GENERATOR
 ========================================================= */
 
 function generateSVG(
     year,
     activity,
     percentages,
-    points
+    points,
+    availableYears
 ) {
-    if (!fs.existsSync(TEMPLATE_FILE)) {
-        throw new Error(
-            `Template not found: ${TEMPLATE_FILE}`
-        );
-    }
-
-    let template =
-        fs.readFileSync(
-            TEMPLATE_FILE,
-            "utf8"
-        );
+    let svg = fs.readFileSync(
+        TEMPLATE_FILE,
+        "utf8"
+    );
 
 
-    /* -----------------------------------------------------
+    /* =====================================================
        YEAR
-    ----------------------------------------------------- */
+    ===================================================== */
 
-    template = template.replace(
+    svg = svg.replace(
         /\[year\]/g,
         String(year)
     );
 
 
-    /* -----------------------------------------------------
-       RAW VALUES
-    ----------------------------------------------------- */
+    /* =====================================================
+       ACTIVITY VALUES
+    ===================================================== */
 
-    template = template.replace(
+    svg = svg.replace(
         /\[commits\]/g,
         String(activity.commits)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\[pullRequests\]/g,
         String(activity.pullRequests)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\[issues\]/g,
         String(activity.issues)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\[reviews\]/g,
         String(activity.reviews)
     );
 
 
-    /* -----------------------------------------------------
-       PERCENTAGES
-    ----------------------------------------------------- */
+    /* =====================================================
+       ACTIVITY PERCENTAGES
+    ===================================================== */
 
-    template = template.replace(
+    svg = svg.replace(
         /\[commitsPercent\]/g,
         String(percentages.commits)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\[pullRequestsPercent\]/g,
         String(percentages.pullRequests)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\[issuesPercent\]/g,
         String(percentages.issues)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\[reviewsPercent\]/g,
         String(percentages.reviews)
     );
 
 
-    /* -----------------------------------------------------
-       ACTIVITY POINTS
-    ----------------------------------------------------- */
+    /* =====================================================
+       GRAPH POINTS
+    ===================================================== */
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{commitsPoint\}\}/g,
-        pointToString(points.commits)
+        `${points.commits.x},${points.commits.y}`
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{pullRequestsPoint\}\}/g,
-        pointToString(points.pullRequests)
+        `${points.pullRequests.x},${points.pullRequests.y}`
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{issuesPoint\}\}/g,
-        pointToString(points.issues)
+        `${points.issues.x},${points.issues.y}`
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{reviewsPoint\}\}/g,
-        pointToString(points.reviews)
+        `${points.reviews.x},${points.reviews.y}`
     );
 
 
-    /* -----------------------------------------------------
-       INDIVIDUAL X / Y VALUES
-    ----------------------------------------------------- */
+    /* =====================================================
+       INDIVIDUAL POINT COORDINATES
+    ===================================================== */
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{commitsX\}\}/g,
         points.commits.x.toFixed(2)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{commitsY\}\}/g,
         points.commits.y.toFixed(2)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{pullRequestsX\}\}/g,
         points.pullRequests.x.toFixed(2)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{pullRequestsY\}\}/g,
         points.pullRequests.y.toFixed(2)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{issuesX\}\}/g,
         points.issues.x.toFixed(2)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{issuesY\}\}/g,
         points.issues.y.toFixed(2)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{reviewsX\}\}/g,
         points.reviews.x.toFixed(2)
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{reviewsY\}\}/g,
         points.reviews.y.toFixed(2)
     );
 
 
-    /* -----------------------------------------------------
-       ACTIVITY LINES
-    ----------------------------------------------------- */
+    /* =====================================================
+       GRAPH AXIS LINES
+    ===================================================== */
 
-    const horizontalLine =
-        createActivityLine(
-            points.commits,
-            points.issues
-        );
-
-    const verticalLine =
-        createActivityLine(
-            points.reviews,
-            points.pullRequests
-        );
-
-    template = template.replace(
+    svg = svg.replace(
         /\{\{horizontalActivityLine\}\}/g,
-        horizontalLine
+
+        `M ${points.commits.x} ${CENTER_Y}
+         L ${points.issues.x} ${CENTER_Y}`
     );
 
-    template = template.replace(
+    svg = svg.replace(
         /\{\{verticalActivityLine\}\}/g,
-        verticalLine
+
+        `M ${CENTER_X} ${points.reviews.y}
+         L ${CENTER_X} ${points.pullRequests.y}`
     );
 
 
-    /* -----------------------------------------------------
-       META
-    ----------------------------------------------------- */
+    /* =====================================================
+       USERNAME
+    ===================================================== */
 
-    template = template.replace(
+    svg = svg.replace(
         /\[username\]/g,
         GITHUB_USERNAME
     );
 
-    template = template.replace(
+
+    /* =====================================================
+       UPDATED DATE
+    ===================================================== */
+
+    svg = svg.replace(
         /\[updated\]/g,
-        getUpdatedDate()
+        new Date().toISOString().slice(0, 10)
     );
 
 
-    return template;
+    /* =====================================================
+       DYNAMIC YEAR NAVIGATION
+    ===================================================== */
+
+    const visibleYears = availableYears.slice(0, 5);
+
+    for (let index = 0; index < 5; index++) {
+        const value =
+            visibleYears[index] !== undefined
+                ? visibleYears[index]
+                : "";
+
+        svg = svg.replace(
+            new RegExp(`\\{\\{year${index}\\}\\}`, "g"),
+            String(value)
+        );
+    }
+
+
+    /* =====================================================
+       REMOVE EMPTY YEAR ITEMS
+    ===================================================== */
+
+    svg = svg.replace(
+        /\{\{year[0-4]\}\}/g,
+        ""
+    );
+
+
+    return svg;
 }
 
 
 /* =========================================================
-   VALIDATE SVG
+   SVG VALIDATION
 ========================================================= */
 
-function validateSVG(svg) {
-    if (!svg.trim()) {
-        throw new Error(
-            "Generated SVG is empty."
-        );
-    }
-
-    if (!svg.includes("<svg")) {
-        throw new Error(
-            "Generated output does not contain a valid SVG."
-        );
-    }
-
-    if (svg.includes("```")) {
-        throw new Error(
-            "Generated SVG contains Markdown code fences."
-        );
-    }
-
-
-    /* -----------------------------------------------------
-       PLACEHOLDER VALIDATION
-    ----------------------------------------------------- */
-
-    const unresolvedPlaceholders = [
+function validateSVG(svg, year) {
+    const requiredPlaceholders = [
         "[year]",
-
         "[commits]",
         "[pullRequests]",
         "[issues]",
         "[reviews]",
-
         "[commitsPercent]",
         "[pullRequestsPercent]",
         "[issuesPercent]",
         "[reviewsPercent]",
-
         "{{commitsPoint}}",
         "{{pullRequestsPoint}}",
         "{{issuesPoint}}",
         "{{reviewsPoint}}",
-
         "{{commitsX}}",
         "{{commitsY}}",
-
         "{{pullRequestsX}}",
         "{{pullRequestsY}}",
-
         "{{issuesX}}",
         "{{issuesY}}",
-
         "{{reviewsX}}",
         "{{reviewsY}}",
-
         "{{horizontalActivityLine}}",
-        "{{verticalActivityLine}}"
+        "{{verticalActivityLine}}",
+        "[username]",
+        "[updated]"
     ];
 
+    const missing = requiredPlaceholders.filter(
+        placeholder =>
+            svg.includes(placeholder)
+    );
 
-    const unresolved =
-        unresolvedPlaceholders.filter(
-            placeholder =>
-                svg.includes(placeholder)
-        );
-
-
-    if (unresolved.length > 0) {
+    if (missing.length > 0) {
         throw new Error(
-            `Unresolved placeholders: ${unresolved.join(", ")}`
+            `Template validation failed for ${year}. Missing placeholders: ${missing.join(", ")}`
         );
     }
 }
@@ -691,76 +611,50 @@ function validateSVG(svg) {
    SAVE SVG
 ========================================================= */
 
-function saveSVG(
-    svg,
-    year
-) {
-    if (
-        !fs.existsSync(
-            GENERATED_DIRECTORY
-        )
-    ) {
-        fs.mkdirSync(
-            GENERATED_DIRECTORY,
-            {
-                recursive: true
-            }
-        );
-    }
+function saveSVG(svg, year) {
+    fs.mkdirSync(
+        GENERATED_DIRECTORY,
+        {
+            recursive: true
+        }
+    );
 
-
-    const yearOutputFile =
-        path.join(
-            GENERATED_DIRECTORY,
-            `activity-${year}.svg`
-        );
-
+    const outputFile = path.join(
+        GENERATED_DIRECTORY,
+        `activity-${year}.svg`
+    );
 
     fs.writeFileSync(
-        yearOutputFile,
+        outputFile,
         svg,
         "utf8"
     );
 
-
-    return yearOutputFile;
+    console.log(
+        `✓ Generated: activity-${year}.svg`
+    );
 }
 
 
 /* =========================================================
-   SAVE CURRENT ACTIVITY SVG
+   SAVE CURRENT SVG
 ========================================================= */
 
 function saveCurrentSVG(svg) {
-    if (
-        !fs.existsSync(
-            GENERATED_DIRECTORY
-        )
-    ) {
-        fs.mkdirSync(
-            GENERATED_DIRECTORY,
-            {
-                recursive: true
-            }
-        );
-    }
-
-
-    const currentOutputFile =
-        path.join(
-            GENERATED_DIRECTORY,
-            "activity.svg"
-        );
-
+    const outputFile = path.join(
+        GENERATED_DIRECTORY,
+        "activity.svg"
+    );
 
     fs.writeFileSync(
-        currentOutputFile,
+        outputFile,
         svg,
         "utf8"
     );
 
-
-    return currentOutputFile;
+    console.log(
+        "✓ Generated: activity.svg"
+    );
 }
 
 
@@ -768,122 +662,52 @@ function saveCurrentSVG(svg) {
    GENERATE ONE YEAR
 ========================================================= */
 
-async function generateYear(year) {
+async function generateYear(
+    year,
+    availableYears
+) {
     console.log(
-        `\n📅 Processing ${year}...`
+        `\nGenerating activity for ${year}...`
     );
 
-
-    /* -----------------------------------------------------
-       FETCH
-    ----------------------------------------------------- */
-
-    const githubData =
-        await fetchGitHubActivity(
-            year
-        );
-
-
-    /* -----------------------------------------------------
-       RAW ACTIVITY
-    ----------------------------------------------------- */
+    const githubActivity =
+        await fetchGitHubActivity(year);
 
     const activity =
-        getRawActivity(
-            githubData
-        );
-
-
-    console.log(
-        `📊 ${year} Activity:`
-    );
-
-    console.log(
-        JSON.stringify(
-            activity,
-            null,
-            2
-        )
-    );
-
-
-    /* -----------------------------------------------------
-       SCALE
-    ----------------------------------------------------- */
+        getRawActivity(githubActivity);
 
     const scale =
-        calculateScale(
-            activity
-        );
-
-
-    /* -----------------------------------------------------
-       PERCENTAGES
-    ----------------------------------------------------- */
+        calculateScale(activity);
 
     const percentages =
-        calculatePercentages(
-            activity
-        );
-
-
-    /* -----------------------------------------------------
-       GRAPH POINTS
-    ----------------------------------------------------- */
+        calculatePercentages(activity);
 
     const points =
         createActivityPoints(
-            scale
+            scale,
+            activity
         );
-
-
-    /* -----------------------------------------------------
-       SVG
-    ----------------------------------------------------- */
 
     const svg =
         generateSVG(
             year,
             activity,
             percentages,
-            points
+            points,
+            availableYears
         );
-
-
-    /* -----------------------------------------------------
-       VALIDATE
-    ----------------------------------------------------- */
 
     validateSVG(
-        svg
+        svg,
+        year
     );
 
-
-    /* -----------------------------------------------------
-       SAVE
-    ----------------------------------------------------- */
-
-    const outputFile =
-        saveSVG(
-            svg,
-            year
-        );
-
-
-    console.log(
-        `✅ ${year} SVG generated.`
+    saveSVG(
+        svg,
+        year
     );
 
-    console.log(
-        `📁 ${outputFile}`
-    );
-
-
-    return {
-        year,
-        activity,
-        svg
-    };
+    return svg;
 }
 
 
@@ -892,114 +716,122 @@ async function generateYear(year) {
 ========================================================= */
 
 async function main() {
-    console.log(
-        "🚀 Generating GitHub activity..."
-    );
-
-    console.log(
-        `👤 User: ${GITHUB_USERNAME}`
-    );
-
-    console.log(
-        `📆 Years: ${YEARS.join(", ")}`
-    );
-
-
-    /* -----------------------------------------------------
-       TEMPLATE CHECK
-    ----------------------------------------------------- */
-
-    if (!fs.existsSync(TEMPLATE_FILE)) {
-        throw new Error(
-            `Template not found: ${TEMPLATE_FILE}`
+    try {
+        console.log(
+            "=========================================="
         );
-    }
 
-
-    /* -----------------------------------------------------
-       GENERATED DIRECTORY
-    ----------------------------------------------------- */
-
-    if (
-        !fs.existsSync(
-            GENERATED_DIRECTORY
-        )
-    ) {
-        fs.mkdirSync(
-            GENERATED_DIRECTORY,
-            {
-                recursive: true
-            }
+        console.log(
+            " GitHub Activity Generator"
         );
-    }
+
+        console.log(
+            ` User: ${GITHUB_USERNAME}`
+        );
+
+        console.log(
+            "=========================================="
+        );
 
 
-    /* -----------------------------------------------------
-       GENERATE ALL YEARS
-    ----------------------------------------------------- */
+        /* =============================================
+           DETECT ACTUAL CONTRIBUTION YEARS
+        ============================================= */
 
-    let currentYearSVG = null;
+        const availableYears =
+            await fetchContributionYears();
 
 
-    for (const year of YEARS) {
-        const result =
-            await generateYear(
-                year
+        if (availableYears.length === 0) {
+            throw new Error(
+                "No GitHub contribution years were found."
             );
-
-
-        if (
-            year === CURRENT_YEAR
-        ) {
-            currentYearSVG =
-                result.svg;
         }
-    }
 
 
-    /* -----------------------------------------------------
-       SAVE CURRENT YEAR AS activity.svg
-    ----------------------------------------------------- */
+        console.log(
+            `\nDetected contribution years: ${availableYears.join(", ")}`
+        );
 
-    if (currentYearSVG) {
-        const currentOutputFile =
+
+        /* =============================================
+           GENERATE ONLY DETECTED YEARS
+        ============================================= */
+
+        let currentSVG = null;
+
+        for (const year of availableYears) {
+            const svg =
+                await generateYear(
+                    year,
+                    availableYears
+                );
+
+            if (year === CURRENT_YEAR) {
+                currentSVG = svg;
+            }
+        }
+
+
+        /* =============================================
+           CURRENT SVG
+        ============================================= */
+
+        if (!currentSVG) {
+            const latestYear =
+                availableYears[0];
+
+            const latestFile =
+                path.join(
+                    GENERATED_DIRECTORY,
+                    `activity-${latestYear}.svg`
+                );
+
+            if (fs.existsSync(latestFile)) {
+                currentSVG =
+                    fs.readFileSync(
+                        latestFile,
+                        "utf8"
+                    );
+            }
+        }
+
+
+        if (currentSVG) {
             saveCurrentSVG(
-                currentYearSVG
+                currentSVG
             );
+        }
 
 
         console.log(
-            `\n⭐ Current activity SVG:`
+            "\n=========================================="
         );
 
         console.log(
-            `📁 ${currentOutputFile}`
+            " Activity generation completed!"
         );
+
+        console.log(
+            "=========================================="
+        );
+
+    } catch (error) {
+        console.error(
+            "\n✗ Generation failed:"
+        );
+
+        console.error(
+            error.message
+        );
+
+        process.exit(1);
     }
-
-
-    /* -----------------------------------------------------
-       COMPLETE
-    ----------------------------------------------------- */
-
-    console.log(
-        "\n🎉 All activity SVGs generated successfully."
-    );
 }
 
 
 /* =========================================================
-   ERROR HANDLING
+   RUN
 ========================================================= */
 
-main().catch(error => {
-    console.error(
-        "\n❌ Failed to generate activity SVG."
-    );
-
-    console.error(
-        error.message
-    );
-
-    process.exit(1);
-});
+main();
